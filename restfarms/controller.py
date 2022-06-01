@@ -33,39 +33,39 @@ class Router():
         self.routes.add(route)
 
 class Get(Route):
-    def __init__(self, **rargs):
+    def __init__(self, rule, **rargs):
         if 'methods' not in rargs:
             rargs['methods'] = ['GET']
             
-        Route.__init__(self, **rargs)
+        Route.__init__(self, rule, **rargs)
 
 class Post(Route):
-    def __init__(self, **rargs):
+    def __init__(self, rule, **rargs):
         if 'methods' not in rargs:
             rargs['methods'] = ['POST']
             
-        Route.__init__(self, **rargs)
+        Route.__init__(self, rule, **rargs)
 
 class Put(Route):
-    def __init__(self, **rargs):
+    def __init__(self, rule, **rargs):
         if 'methods' not in rargs:
             rargs['methods'] = ['PUT']
             
-        Route.__init__(self, **rargs)
+        Route.__init__(self, rule, **rargs)
 
 class Patch(Route):
-    def __init__(self, **rargs):
+    def __init__(self, rule, **rargs):
         if 'methods' not in rargs:
             rargs['methods'] = ['PATCH']
             
-        Route.__init__(self, **rargs)
+        Route.__init__(self, rule, **rargs)
 
 class Delete(Route):
-    def __init__(self, **rargs):
+    def __init__(self, rule, **rargs):
         if 'methods' not in rargs:
             rargs['methods'] = ['DELETE']
             
-        Route.__init__(self, **rargs)
+        Route.__init__(self, rule, **rargs)
 
 # from: https://github.com/marciojmo/flask-rest-decorators/blob/main/src/flask_rest_decorators/decorators.py
 def get(rule, **options):

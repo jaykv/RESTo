@@ -1,4 +1,4 @@
-from restfarms.models.user import User
+from restfarms.models.user import Users
 from restfarms.controller import controller, Get, Post, Delete, Router, get
 from restfarms.actions import Actions
 
@@ -13,12 +13,12 @@ def delete_test(id):
 
 @controller('/users')
 class UserController:
-    model = User
+    model = Users
     router = Router(
-        Get(rule='/', execute=exec_test),
-        Get(rule='/lambda/<id>', execute=lambda id: id),
-        Post(rule='/<id>', execute=post_test),
-        Delete(rule='/<id>', execute=delete_test)
+        Get('/', execute=exec_test),
+        Get('/lambda/<id>', execute=lambda id: f'lambda user {id}'),
+        Post('/<id>', execute=post_test),
+        Delete('/<id>', execute=delete_test)
     )
 
     @get(rule='/<id>')
