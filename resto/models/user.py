@@ -1,5 +1,5 @@
 from mongoframes import Frame
-from restfarms.model import model, Field
+from resto.model import model, Field
 from datetime import datetime
 
 @model

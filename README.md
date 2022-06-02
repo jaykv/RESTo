@@ -1,6 +1,6 @@
 
-# RESTFarms (in development)
-Streamlined REST API framework with a focus on reducing boilerplate and providing flexibility with plug-and-play plugins. Primary focus is to synergize with popular web frameworks and databases (through ORM/ODMs) to support a unified structure to bootstrap REST APIs quickly.
+# RESTo (in development)
+Streamlined REST API framework with a focus on reducing boilerplate and fast-tracking CRUD actions with dynamic routes. Synergizes nicely with popular web frameworks and databases (through ORM/ODMs) to support a unified structure to bootstrap REST APIs quickly.
 
 ## Current plugins
 * Flask (controller loader)
@@ -14,7 +14,7 @@ Models define the schema- fields, properties, and attributes of entities. Define
 
 ```python
 from mongoframes import Frame
-from restfarms.model import model, Field
+from resto.model import model, Field
 from datetime import datetime
 
 @model
@@ -28,11 +28,11 @@ class User(Frame):
 ```
 
 ### Controller
-Controllers define a structure of routes to form an API based on a model and router. Additionally links the model for performing DB-based actions dynamically.
+Controllers use a Router and custom method definitions to setup nested API routes under a common endpoint. Additionally links the model for performing DB-based actions dynamically in routes.
 
 ```python
-from restfarms.models.user import User
-from restfarms.controller import controller, Get, Post, Delete, Router, get
+from resto.models.user import User
+from resto.controller import controller, Get, Post, Delete, Router, get
 
 def exec_test():
     return 'exec'
@@ -47,7 +47,7 @@ def delete_test(id):
 class UserController:
     model = User
     router = Router(
-        Get(/', execute=exec_test),
+        Get('/', execute=exec_test),
         Get('/lambda/<id>', execute=lambda id: id),
         Post('/<id>', execute=post_test),
         Delete('/<id>', execute=delete_test)
@@ -61,10 +61,10 @@ class UserController:
 ### App Runner
 
 ```python
-from restfarms.plugins.flask import build_app, FlaskController
-from restfarms.plugins.mongoframes import MongoModeler
-from restfarms.controllers.user import UserController
-from restfarms.models.user import Users
+from resto.plugins.flask import build_app, FlaskController
+from resto.plugins.mongoframes import MongoModeler
+from resto.controllers.user import UserController
+from resto.models.user import Users
 
 app = build_app(__name__)
 

@@ -1,6 +1,6 @@
 from flask import Flask, Blueprint
-from restfarms.controller import Controllers, Router
-from restfarms.util import BaseUtil, RESTError
+from resto.controller import Controllers, Router
+from resto.util import BaseUtil, RESTError
 
 def build_app(name):
     app = Flask(name)

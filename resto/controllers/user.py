@@ -1,6 +1,6 @@
-from restfarms.models.user import Users
-from restfarms.controller import controller, Get, Post, Delete, Router, get
-from restfarms.actions import Actions
+from resto.models.user import Users
+from resto.controller import controller, Get, Post, Delete, Router, get
+from resto.actions import Actions
 
 def exec_test():
     return 'exec'

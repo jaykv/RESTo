@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from restfarms.model import FarmBuilder, Models
+from resto.model import FarmBuilder, Models
 from mongoframes import Frame
 
 class MongoModeler:

@@ -1,5 +1,5 @@
 from mongoframes import Frame
-from restfarms.util import BaseUtil, RESTError
+from resto.util import BaseUtil, RESTError
 from bson import ObjectId
 
 class Actions:

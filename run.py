@@ -1,7 +1,7 @@
-from restfarms.plugins.flask import build_app, FlaskController
-from restfarms.plugins.mongoframes import MongoModeler
-from restfarms.controllers import *
-from restfarms.models import *
+from resto.plugins.flask import build_app, FlaskController
+from resto.plugins.mongoframes import MongoModeler
+from resto.controllers import *
+from resto.models import *
 
 app = build_app(__name__)
 
