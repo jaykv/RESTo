@@ -39,33 +39,33 @@ class Field:
             return {field.name: field for field in fields if getattr(field, feature) == value}
 
 class FarmBuilder:
-    __slots__ = ['all_fields', 'farm_fields']
+    __slots__ = ['all_fields', 'farm_fields', 'public_fields', 'private_fields', 'ref_fields', 'sub_fields']
     properties = ['Insertable', 'Updatable', 'Deletable']
 
     def __init__(self):
         self.all_fields = {}
-        self._fields = {}
         self.farm_fields = {}
         for property in FarmBuilder.properties:
             self.farm_fields[property] = {}
 
     def seed_field(self, field: Field):
         self.all_fields[field.name] = field
-        self._fields[field.name] = field.pydobj
 
     def seed_fields(self, fields: list[Field]):
         valid_fields = filter(lambda field: isinstance(field, Field), fields)
-        for property in FarmBuilder.properties:
-            self.farm_fields[property] = Field.filtered_by(fields, property)
 
-        map(self.seed_field, valid_fields)
-
+        for field in valid_fields:
+            self.seed_field(field)
+        
     def build_farms(self, model_name):
         self.public_fields = filter(lambda field: field.private == False, self.all_fields)
         self.private_fields = filter(lambda field: field.private == True, self.all_fields)
         self.ref_fields = filter(lambda field: field.ref is not False, self.all_fields)
         self.sub_fields = filter(lambda field: field.sub is not False, self.all_fields)
 
+        for property in FarmBuilder.properties:
+            self.farm_fields[property] = Field.filtered_by(self.all_fields, property, aliased=True)
+            
         farms = {}
         for property in FarmBuilder.properties:
             farm_name = f'{model_name}{property}'
@@ -77,4 +77,7 @@ class FarmBuilder:
         if not property_name in FarmBuilder.properties:
             return
         
-        return create_model(farm_name, **self.farm_fields[property_name], **margs)
+        farm_fields = self.farm_fields[property_name]
+        model_fields = {field_name: field.pydobj for field_name, field in farm_fields.items()}
+        
+        return create_model(farm_name, **model_fields, **margs)

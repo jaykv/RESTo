@@ -4,7 +4,13 @@ log = Logger(__name__)
 class BaseUtil:
     def error(*args, **kwargs):
         log.error(*args, **kwargs)
+        
+    def listify(data) -> list:
+        if type(data) == list:
+            return data
 
+        return [data]
+    
 class RESTError(Exception):
     status_code = 500
 

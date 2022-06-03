@@ -1,9 +1,12 @@
 from resto.models.user import Users
 from resto.controller import controller, Get, Post, Delete, Router, get
 from resto.actions import Actions
+from resto.api import spec, ResponseModel, Response
+from spectree import Response as SpecResponse
 
+@spec.validate(resp=SpecResponse(HTTP_200=ResponseModel), tags=['users'])
 def exec_test():
-    return 'exec'
+    return Response(output='exec')
 
 def post_test():
     return 'post'
@@ -22,5 +25,6 @@ class UserController:
     )
 
     @get(rule='/<id>')
+    @spec.validate(resp=SpecResponse(HTTP_200=ResponseModel), tags=['users'])
     def get_user(id):
-        return f'get user {id}'
+        return Response(f'get user {id}')

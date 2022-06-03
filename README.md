@@ -2,10 +2,12 @@
 # RESTo (in development)
 Streamlined REST API framework with a focus on reducing boilerplate and fast-tracking CRUD actions with dynamic routes. Synergizes nicely with popular web frameworks and databases (through ORM/ODMs) to support a unified structure to bootstrap REST APIs quickly.
 
-## Current plugins
-* Flask (controller loader)
-* MongoFrames (model loader)
+## Plugs
+Plugs are external frameworks and database ORM/ODMs that "plug" into the RESTo framework through connectors. Connectors bridge the gap between RESTo's abstraction layer- linking the frameworks through an interface for either AppBuilder/Controller or Actions/Model.
 
+### Current Plugs
+* Flask (controller connector)
+* MongoFrames (model connector)
 
 ## Usage
 
@@ -61,8 +63,8 @@ class UserController:
 ### App Runner
 
 ```python
-from resto.plugins.flask import build_app, FlaskController
-from resto.plugins.mongoframes import MongoModeler
+from resto.plugs.flask import build_app, FlaskController
+from resto.plugs.mongoframes import MongoModeler
 from resto.controllers.user import UserController
 from resto.models.user import Users
 
