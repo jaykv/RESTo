@@ -2,6 +2,21 @@
 # RESTo (in development)
 Streamlined REST API framework with a focus on reducing boilerplate and fast-tracking CRUD actions with dynamic routes. Synergizes nicely with popular web frameworks and databases (through ORM/ODMs) to support a unified structure to bootstrap REST APIs quickly.
 
+## Features
+* Structured route builder
+* Dynamic CRUD routes generation and configuration
+* Built-in request & response validation
+* SQL/NoSQL ORM/ODM support to perform DB operations
+* Customizable plugs
+
+### Todo:
+* Base CRUD routes generation based on controller configuration
+* Model relationships
+* Dynamic cascades based on Model rules
+* Search flags to support flexible data-filtering through endpoint args
+* SQLalchemy support (model connector)
+* Falcon and Starlette support (controller connectors)
+ 
 ## Plugs
 Plugs are external frameworks and database ORM/ODMs that "plug" into the RESTo framework through connectors. Connectors bridge the gap between RESTo's abstraction layer- linking the frameworks through an interface for either AppBuilder/Controller or Actions/Model.
 
