@@ -1,6 +1,5 @@
 from resto.models.user import Users
 from resto.controller import controller, Get, Post, Delete, Router, get
-from resto.actions import Actions
 from resto.api import spec, ResponseModel, Response
 from spectree import Response as SpecResponse
 

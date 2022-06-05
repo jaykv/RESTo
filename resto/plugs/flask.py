@@ -1,20 +1,21 @@
 from flask import Flask, Blueprint
-from resto.controller import Controllers, Router
+from resto.controller import Router, App, Controller
 from resto.util import BaseUtil, RESTError
+from typing import List
 
-def build_app(name):
-    app = Flask(name)
+class RESToFlask(App):
+        
+    def build_app(self):
+        app = Flask(self.name)
 
-    @app.errorhandler(RESTError)
-    def handle_error(e):
-        BaseUtil.error(e)
-        return f'ERROR: {e}'
+        @app.errorhandler(RESTError)
+        def handle_error(e):
+            BaseUtil.error(e)
+            return f'ERROR: {e}'
 
-    return app
+        return app
 
-class FlaskController:
-    @staticmethod
-    def load_controller(controller):
+    def load_controller(self, controller: Controller):
         # based on https://github.com/marciojmo/flask-rest-decorators
         controller.__blueprint__ = Blueprint( controller.__name__, controller.__module__, url_prefix = controller.endpoint )
         controller.register_routes = lambda app: app.register_blueprint(controller.__blueprint__)
@@ -40,8 +41,7 @@ class FlaskController:
             if (hasattr(m, '__rest_metainfo__')):
                 controller.__blueprint__.add_url_rule( m.__rest_metainfo__['rule'], m.__rest_metainfo__['name'], m, **m.__rest_metainfo__['options'])
 
-    @staticmethod
-    def load_controllers(app):
-        for controller in Controllers:
-            FlaskController.load_controller(controller)
-            controller.register_routes(app)
+    def load_controllers(self, controllers: List[Controller]):
+        for controller in controllers:
+            self.load_controller(controller)
+            controller.register_routes(self.app)

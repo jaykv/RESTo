@@ -1,5 +1,5 @@
 from mongoframes import Frame
-from typing import Callable
+from typing import Callable, TypeVar, List, Generic
 from resto.actions import Actions
 from resto.api import spec
 __all__ = ['Controllers', 'controller', 'Route', 'Router', 'Get', 'Post', 'Put', 'Patch', 'Delete', 
@@ -7,6 +7,26 @@ __all__ = ['Controllers', 'controller', 'Route', 'Router', 'Get', 'Post', 'Put',
 
 Controllers = set()
 
+Controller = TypeVar('Controller')
+class App(Generic[Controller]):
+    ASYNC = False
+    
+    def __init__(self, name: str, lazy_load: bool=False):
+        self.name = name
+        self.app = self.build_app()
+        
+        if not lazy_load:
+            self.load_controllers(Controllers)
+    
+    def build_app(self):
+        raise NotImplementedError
+    
+    def load_controller(self, controller: Controller):
+        raise NotImplementedError
+    
+    def load_controllers(self, controllers: List[Controller]):
+        raise NotImplementedError
+    
 def controller(endpoint):
     def register_controller(cls):
         cls.endpoint = endpoint

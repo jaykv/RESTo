@@ -19,7 +19,7 @@ from mongoframes import Frame
 from resto.model import model, Field
 from datetime import datetime
 
-@model
+@model()
 class User(Frame):
     fields = {
         'firstname': (str, ...), # required field
@@ -33,11 +33,14 @@ class User(Frame):
 Controllers use a Router and custom method definitions to setup nested API routes under a common endpoint. Additionally links the model for performing DB-based actions dynamically in routes.
 
 ```python
-from resto.models.user import User
+from resto.models.user import Users
 from resto.controller import controller, Get, Post, Delete, Router, get
+from resto.api import spec, ResponseModel, Response
+from spectree import Response as SpecResponse
 
+@spec.validate(resp=SpecResponse(HTTP_200=ResponseModel), tags=['users'])
 def exec_test():
-    return 'exec'
+    return Response(output='exec')
 
 def post_test():
     return 'post'
@@ -47,34 +50,41 @@ def delete_test(id):
 
 @controller('/users')
 class UserController:
-    model = User
+    model = Users
     router = Router(
-        Get('/', execute=exec_test),
-        Get('/lambda/<id>', execute=lambda id: id),
+        # dynamic get- fetch
+        Get('/', query={'test': 123}), 
+        
+        # custom executes
+        Get('/lambda/<id>', execute=lambda id: f'lambda user {id}'),
         Post('/<id>', execute=post_test),
         Delete('/<id>', execute=delete_test)
     )
 
     @get(rule='/<id>')
+    @spec.validate(resp=SpecResponse(HTTP_200=ResponseModel), tags=['users'])
     def get_user(id):
-        return f'get user {id}'
+        return Response(f'get user {id}')
 ```
 
 ### App Runner
 
 ```python
-from resto.plugs.flask import build_app, FlaskController
+from resto.plugs.flask import RESToFlask
 from resto.plugs.mongoframes import MongoModeler
-from resto.controllers.user import UserController
-from resto.models.user import Users
+from resto.controllers import *
+from resto.models import *
+from resto.api import register_spec
 
-app = build_app(__name__)
-
-# load imported models- parse model to setup fields and generate validation farms
+# load models first
 MongoModeler.load_models()
 
-# load imported controllers- build routes from controller dynamically
-FlaskController.load_controllers(app)
+app = RESToFlask(__name__, lazy_load=False).app
+
+# if lazy loaded app, load controllers now:
+#RESToFlask.load_controllers(app)
+
+spec = register_spec('flask', app)
 
 if __name__ == '__main__':
     app.run(debug=True)

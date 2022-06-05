@@ -1,13 +1,16 @@
-from resto.plugs.flask import build_app, FlaskController
+from resto.plugs.flask import RESToFlask
 from resto.plugs.mongoframes import MongoModeler
 from resto.controllers import *
 from resto.models import *
 from resto.api import register_spec
 
-app = build_app(__name__)
-
+# load models first
 MongoModeler.load_models()
-FlaskController.load_controllers(app)
+
+app = RESToFlask(__name__, lazy_load=False).app
+
+# if lazy loaded app, load controllers now:
+#RESToFlask.load_controllers(app)
 
 spec = register_spec('flask', app)
 
