@@ -71,27 +71,12 @@ class Router():
     def add(self, route: Route):
         self.routes.add(route)
         
-    def restify_routes(self, controller: type[object]):
-        print(controller)
-        for route in self.routes:
-            method = self.gen_method(route, controller.model)
-            
-            method.__rest_metainfo__ = {
-                'rule': route.rule,
-                'name': method.__name__,
-                'options': {
-                    **route.options,
-                    **{ 'methods': route.methods }
-                }
-            }
-
-            setattr(controller, method.__name__, method)
-        
-    def gen_method(self, route: Route, model: type[Frame]):
+    @classmethod
+    def gen_method(cls, route: Route, model: type[Frame]):
         gen_options = {
             'model': model,
         }
-        print(model)
+
         if route.execute:
             return route.execute
         
