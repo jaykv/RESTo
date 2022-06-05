@@ -1,11 +1,18 @@
 from typing import Any, List
-from spectree import SpecTree
+from spectree import SpecTree, Response as SpecResponse
 from spectree.plugins import PLUGINS as SPEC_PLUGINS
 from spectree.config import Configuration
 from pydantic import BaseModel
 from resto.util import BaseUtil
 
-spec = SpecTree()
+class RESTSpecTree(SpecTree):
+    def rest_validate(self, **kwargs):
+        if 'resp' in kwargs:
+            return self.validate(**kwargs)
+        else:
+            return self.validate(resp=SpecResponse(HTTP_200=ResponseModel), **kwargs)
+        
+spec = RESTSpecTree()
 
 class ResponseModel(BaseModel):
     data: List[Any]

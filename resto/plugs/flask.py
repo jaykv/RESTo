@@ -19,18 +19,8 @@ class FlaskController:
         controller.__blueprint__ = Blueprint( controller.__name__, controller.__module__, url_prefix = controller.endpoint )
         controller.register_routes = lambda app: app.register_blueprint(controller.__blueprint__)
 
-        # add routes to controller
-        for route in controller.router.routes:
-            route.execute.__rest_metainfo__ = {
-                'rule': route.rule,
-                'name': route.execute.__name__,
-                'options': {
-                    **route.options,
-                    **{ 'methods': route.methods }
-                }
-            }
-
-            setattr(controller, route.execute.__name__, route.execute)
+        # restify controller routes by setting rest metadata
+        controller.router.restify_routes(controller)
 
         methods = [getattr(controller, m) for m in dir(controller)]
         for m in methods:

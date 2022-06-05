@@ -1,24 +1,27 @@
 from typing import Any
+from unicodedata import name
 from pydantic import BaseModel, create_model
+from resto.util import BaseUtil
 
 Models = set()
 
-def model(cls):
-    def register_model():
+def model():
+    def register_model(cls):
         Models.add(cls)
         return cls
 
     return register_model
 
 class Field:
-    __slots__ = ['pydobj', 'primary', 'private', 'Insertable', 'Updatable', 'Deletable', 'alias', 'ref', 'sub']
-    def __init__(self, pydobj, primary=False, private=False, Insertable=True, Updatable=True, Deletable=True, alias=None, ref=None, sub=None):
+    __slots__ = ['name', 'pydobj', 'primary', 'private', 'Insertable', 'Updatable', 'Filterable', 'alias', 'ref', 'sub']
+    def __init__(self, pydobj, name=None, primary=False, private=False, Insertable=True, Updatable=True, Filterable=True, alias=None, ref=None, sub=None):
+        self.name = name
         self.pydobj = pydobj
         self.primary = primary
         self.private = private
         self.Insertable = Insertable
         self.Updatable = Updatable
-        self.Deletable = Deletable
+        self.Filterable = Filterable
         self.alias = alias
         self.ref = ref
         self.sub = sub
@@ -37,10 +40,10 @@ class Field:
             return {(field.alias or field.name): field for field in fields if getattr(field, feature) == value}
         else:
             return {field.name: field for field in fields if getattr(field, feature) == value}
-
+    
 class FarmBuilder:
     __slots__ = ['all_fields', 'farm_fields', 'public_fields', 'private_fields', 'ref_fields', 'sub_fields']
-    properties = ['Insertable', 'Updatable', 'Deletable']
+    properties = ['Insertable', 'Updatable', 'Filterable']
 
     def __init__(self):
         self.all_fields = {}
@@ -64,7 +67,7 @@ class FarmBuilder:
         self.sub_fields = filter(lambda field: field.sub is not False, self.all_fields)
 
         for property in FarmBuilder.properties:
-            self.farm_fields[property] = Field.filtered_by(self.all_fields, property, aliased=True)
+            self.farm_fields[property] = Field.filtered_by(self.all_fields.values(), property, aliased=True)
             
         farms = {}
         for property in FarmBuilder.properties:
@@ -80,4 +83,16 @@ class FarmBuilder:
         farm_fields = self.farm_fields[property_name]
         model_fields = {field_name: field.pydobj for field_name, field in farm_fields.items()}
         
-        return create_model(farm_name, **model_fields, **margs)
+        model = create_model(farm_name, **model_fields, **margs)
+        print(model.schema())
+        return model
+    
+    def load_fields(self, schema):
+        for fieldname, field in schema.items():
+            if not isinstance(field, Field):
+                field = Field(field, name=fieldname)
+            else:
+                field.name = fieldname
+                
+            self.seed_field(field)
+    

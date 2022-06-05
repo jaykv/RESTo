@@ -18,7 +18,10 @@ def delete_test(id):
 class UserController:
     model = Users
     router = Router(
-        Get('/', execute=exec_test),
+        # dynamic get- fetch
+        Get('/', query={'test': 123}), 
+        
+        # custom executes
         Get('/lambda/<id>', execute=lambda id: f'lambda user {id}'),
         Post('/<id>', execute=post_test),
         Delete('/<id>', execute=delete_test)

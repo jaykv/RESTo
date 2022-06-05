@@ -2,7 +2,7 @@ from mongoframes import Frame
 from resto.model import model, Field
 from datetime import datetime
 
-@model
+@model()
 class Users(Frame):
     fields = {
         'firstname': (str, ...),

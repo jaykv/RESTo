@@ -5,14 +5,18 @@ from mongoframes import Frame
 class MongoModeler:
     @staticmethod
     def load_model(model: type[Frame]):
-        # build farms
+        # load fields
         farmbuilder = FarmBuilder()
+        farmbuilder.load_fields(model.fields)
+        
+        # build farms
         model.farms = farmbuilder.build_farms(model.__name__)
         
         # mongoframes model setup
         model._private_fields = farmbuilder.private_fields
         model._fields = farmbuilder.public_fields
         model.farmbuilder = farmbuilder
+        
         return model
 
     @staticmethod

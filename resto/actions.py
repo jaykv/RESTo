@@ -1,10 +1,19 @@
 from mongoframes import Frame
+from resto.api import Response
 from resto.util import BaseUtil, RESTError
 from bson import ObjectId
+from flask import request
 
 class Actions:
     @staticmethod
-    def Inserter(model: type[Frame], json_data: dict) -> Frame:
+    def fetcher(model: type[Frame], args: dict, filter: dict, query: dict, projection: dict):
+        # get the user args
+        request_args = request.context.query
+        BaseUtil.error(query)
+        return Response(data=[request_args, query])
+    
+    @staticmethod
+    def inserter(model: type[Frame], json_data: dict) -> Frame:
         # validation
         validated_obj = model.Insertable(**json_data)
         if not validated_obj:
@@ -15,7 +24,7 @@ class Actions:
         return obj
 
     @staticmethod
-    def Updater(model: type[Frame], id: str, json_data: dict) -> Frame:
+    def updater(model: type[Frame], id: str, json_data: dict) -> Frame:
         obj = model.by_id(ObjectId(id))
         for field in json_data:
             if field in model._fields:
@@ -25,7 +34,7 @@ class Actions:
         return obj
 
     @staticmethod
-    def Deleter(model: type[Frame], id: str, filter: dict) -> Frame:
+    def deleter(model: type[Frame], id: str, filter: dict) -> Frame:
         obj = model.by_id(ObjectId(id)) if id else model.one(filter)
         obj.delete()
         return obj
