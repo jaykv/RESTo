@@ -1,16 +1,19 @@
 from logging import Logger
+
 log = Logger(__name__)
+
 
 class BaseUtil:
     def error(*args):
         log.error(args)
-        
+
     def listify(data) -> list:
         if type(data) == list:
             return data
 
         return [data]
-    
+
+
 class RESTError(Exception):
     status_code = 500
 

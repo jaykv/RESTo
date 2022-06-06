@@ -1,20 +1,23 @@
 from pymongo import MongoClient
 from resto.model import FarmBuilder, Models
 from resto.actions import ActionsConnector, DefaultActions
-from resto.controller import RequestProxy 
+from resto.controller import RequestProxy
 from resto.util import BaseUtil, RESTError
 from resto.api import Response
 from bson import ObjectId
 from mongoframes import Frame
 
+
 class MongoActions(ActionsConnector):
     @staticmethod
-    def fetcher(model: type[Frame], args: dict, filter: dict, query: dict, projection: dict) -> Frame:    
+    def fetcher(
+        model: type[Frame], args: dict, filter: dict, query: dict, projection: dict
+    ) -> Frame:
         # get the user args
         request_args = RequestProxy.request.context.query
         BaseUtil.error(query)
         return Response(data=[request_args, query])
-    
+
     @staticmethod
     def inserter(model: type[Frame], json_data: dict) -> Frame:
         # validation
@@ -41,8 +44,8 @@ class MongoActions(ActionsConnector):
         obj = model.by_id(ObjectId(id)) if id else model.one(filter)
         obj.delete()
         return obj
-        
-        
+
+
 class MongoModeler:
     @staticmethod
     def load_actions():
@@ -53,15 +56,15 @@ class MongoModeler:
         # load fields
         farmbuilder = FarmBuilder()
         farmbuilder.load_fields(model.fields)
-        
+
         # build farms
         model.farms = farmbuilder.build_farms(model.__name__)
-        
+
         # mongoframes model setup
         model._private_fields = farmbuilder.private_fields
         model._fields = farmbuilder.public_fields
         model.farmbuilder = farmbuilder
-        
+
         return model
 
     @staticmethod
