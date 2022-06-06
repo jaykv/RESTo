@@ -5,5 +5,5 @@ setup(
     version='0.1.0',
     description='REST API framework for the lazy',
     packages=find_packages(include=['resto', 'resto.*']),
-    install_requires=[]
+    install_requires=[],
 )

@@ -11,10 +11,9 @@ MongoModeler.load_actions()
 app = RESToFlask(__name__, request_proxy=request, lazy_load=False).app
 
 # if lazy loaded app, load controllers now:
-#RESToFlask.load_controllers(app)
+# RESToFlask.load_controllers(app)
 
 spec = register_spec('flask', app)
 
 if __name__ == '__main__':
     app.run(debug=True)
-

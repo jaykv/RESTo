@@ -14,29 +14,32 @@ class MongoActions(ActionsConnector):
         model: type[Frame], args: dict, filter: dict, query: dict, projection: dict
     ) -> Frame:
         # get the user args
-        request_args = RequestProxy.request.context.query
         BaseUtil.error(query)
-        return Response(data=[request_args, query])
+        return Response(data=[args, query])
 
     @staticmethod
-    def inserter(model: type[Frame], json_data: dict) -> Frame:
+    def inserter(model: type[Frame], data: dict) -> Frame:
         # validation
-        validated_obj = model.Insertable(**json_data)
+        validated_obj = model.Insertable(**data)
         if not validated_obj:
             raise RESTError('Invalid object')
 
-        obj = model(**json_data)
+        obj = model(**data)
         obj.insert()
         return obj
 
     @staticmethod
-    def updater(model: type[Frame], id: str, json_data: dict) -> Frame:
+    def updater(model: type[Frame], id: str, data: dict, upsert: bool = False) -> Frame:
         obj = model.by_id(ObjectId(id))
-        for field in json_data:
+        for field in data:
             if field in model._fields:
-                setattr(obj, field, json_data[field])
+                setattr(obj, field, data[field])
 
-        obj.update()
+        if upsert:
+            obj.upsert()
+        else:
+            obj.update()
+
         return obj
 
     @staticmethod

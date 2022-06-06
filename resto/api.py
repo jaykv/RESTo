@@ -23,20 +23,21 @@ class ResponseModel(BaseModel):
 
 
 def Response(
-    data: Any = None, messages: Any = None, error: bool = False, **raw_data
+    data: Any = None,
+    messages: Any = None,
+    error: bool = False,
+    status_code: int = 200,
+    **raw_data
 ) -> ResponseModel:
-    response_data = []
+    response_data = [raw_data]
     if data:
-        response_data = BaseUtil.listify(data)
-
-    if raw_data:
-        response_data += [{k: v for k, v in raw_data.items()}]
+        response_data += BaseUtil.listify(data)
 
     response_messages = ['SUCCESS'] if not error else ['ERROR']
     if messages:
         response_messages += BaseUtil.listify(messages)
 
-    return ResponseModel(data=response_data, messages=response_messages)
+    return ResponseModel(data=response_data, messages=response_messages), status_code
 
 
 def register_spec(plug, app, **kwargs) -> SpecTree:

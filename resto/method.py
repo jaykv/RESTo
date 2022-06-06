@@ -4,6 +4,7 @@ from resto.api import spec
 from resto.model import Model
 from resto.actions import ActionsConnector
 from resto.util import BaseUtil
+from resto.controller import RequestProxy
 
 Route = TypeVar('Route')
 
@@ -30,7 +31,6 @@ class MethodGenerator:
 
         @spec.rest_validate(**validator)
         def inner_execute(**params):
-            BaseUtil.error(method_params, params)
             results = route.execute(method_params, **params)
 
             if route.hook:
@@ -41,7 +41,13 @@ class MethodGenerator:
         return inner_execute
 
     @classmethod
-    def _get(cls, model, actions, validator, route):
+    def _get(
+        cls,
+        model: type[Model],
+        actions: type[ActionsConnector],
+        validator: dict,
+        route: Route,
+    ):
         args = route.args or {}
         filter = route.filter or {}
         query = route.query or {}
@@ -52,41 +58,92 @@ class MethodGenerator:
 
         @spec.rest_validate(**validator_args)
         def inner_get(**params):
+            req_filters = RequestProxy.request.context.query
+
             results = actions.fetcher(
                 model, args=args, filter=filter, query=query, projection=projection
             )
-
             if route.hook:
                 return route.hook(results=results, **params)
-
             return results
 
         return inner_get
 
     @classmethod
-    def _post(cls, model, actions, validator, route):
-        def inner_post():
-            pass
+    def _post(
+        cls,
+        model: type[Model],
+        actions: type[ActionsConnector],
+        validator: dict,
+        route: Route,
+    ):
+
+        validator_args = {'json': model.farms['Insertable']}
+        validator_args.update(validator)
+
+        @spec.rest_validate(**validator_args)
+        def inner_post(**params):
+            results = actions.inserter(model, data=RequestProxy.request.context.json)
+            if route.hook:
+                return route.hook(results=results, **params)
+            return results
 
         return inner_post
 
     @classmethod
-    def _put(cls, model, actions, validator, route):
-        def inner_put():
-            pass
+    def _patch(
+        cls,
+        model: type[Model],
+        actions: type[ActionsConnector],
+        validator: dict,
+        route: Route,
+    ):
 
-        return inner_put
+        validator_args = {'json': model.farms['Updatable']}
+        validator_args.update(validator)
 
-    @classmethod
-    def _patch(cls, model, actions, validator, route):
-        def inner_patch():
-            pass
+        def inner_patch(**params):
+            results = actions.updater(model, data=RequestProxy.request.context.json)
+            if route.hook:
+                return route.hook(results=results, **params)
+            return results
 
         return inner_patch
 
     @classmethod
-    def _delete(cls, model, actions, validator, route):
-        def inner_delete():
-            pass
+    def _put(
+        cls,
+        model: type[Model],
+        actions: type[ActionsConnector],
+        validator: dict,
+        route: Route,
+    ):
+
+        validator_args = {'json': model.farms['Updatable']}
+        validator_args.update(validator)
+
+        def inner_put(**params):
+            results = actions.updater(
+                model, data=RequestProxy.request.context.json, upsert=True
+            )
+            if route.hook:
+                return route.hook(results=results, **params)
+            return results
+
+        return inner_put
+
+    @classmethod
+    def _delete(
+        cls,
+        model: type[Model],
+        actions: type[ActionsConnector],
+        validator: dict,
+        route: Route,
+    ):
+        def inner_delete(**params):
+            results = actions.deleter(model, filter=RequestProxy.request.context.json)
+            if route.hook:
+                return route.hook(results=results, **params)
+            return results
 
         return inner_delete

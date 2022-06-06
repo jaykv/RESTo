@@ -22,11 +22,11 @@ class ActionsConnector:
         raise NotImplementedError
 
     @staticmethod
-    def inserter(model: type[Model], json_data: dict) -> Model:
+    def inserter(model: type[Model], data: dict) -> Model:
         raise NotImplementedError
 
     @staticmethod
-    def updater(model: type[Model], id: str, json_data: dict) -> Model:
+    def updater(model: type[Model], id: str, data: dict, upsert: bool = False) -> Model:
         raise NotImplementedError
 
     @staticmethod
