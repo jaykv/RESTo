@@ -1,44 +1,29 @@
-from mongoframes import Frame
-from resto.api import Response
-from resto.util import BaseUtil, RESTError
-from bson import ObjectId
-from flask import request
+from typing import TypeVar
 
-class Actions:
+Model = TypeVar('Model')
+
+class ActionsLoader():
+    def __init__(self):
+        self.connector = None
+        
+    def set_connector(self, action_connector):
+        self.connector = action_connector
+        
+DefaultActions: ActionsLoader = ActionsLoader()
+
+class ActionsConnector:
     @staticmethod
-    def fetcher(model: type[Frame], args: dict, filter: dict, query: dict, projection: dict):
-        # get the user args
-        request_args = request.context.query
-        BaseUtil.error(query)
-        return Response(data=[request_args, query])
+    def fetcher(model: type[Model], args: dict, filter: dict, query: dict, projection: dict) -> Model:
+        raise NotImplementedError
     
     @staticmethod
-    def inserter(model: type[Frame], json_data: dict) -> Frame:
-        # validation
-        validated_obj = model.Insertable(**json_data)
-        if not validated_obj:
-            raise RESTError('Invalid object')
-
-        obj = model(**json_data)
-        obj.insert()
-        return obj
+    def inserter(model: type[Model], json_data: dict) -> Model:
+        raise NotImplementedError
 
     @staticmethod
-    def updater(model: type[Frame], id: str, json_data: dict) -> Frame:
-        obj = model.by_id(ObjectId(id))
-        for field in json_data:
-            if field in model._fields:
-                setattr(obj, field, json_data[field])
-
-        obj.update()
-        return obj
+    def updater(model: type[Model], id: str, json_data: dict) -> Model:
+        raise NotImplementedError
 
     @staticmethod
-    def deleter(model: type[Frame], id: str, filter: dict) -> Frame:
-        obj = model.by_id(ObjectId(id)) if id else model.one(filter)
-        obj.delete()
-        return obj
-
-
-
-    
+    def deleter(model: type[Model], id: str, filter: dict) -> Model:
+        raise NotImplementedError

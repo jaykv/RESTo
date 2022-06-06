@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint, request
 from resto.controller import Router, App, Controller
 from resto.util import BaseUtil, RESTError
 from typing import List

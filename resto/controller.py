@@ -1,22 +1,39 @@
 from mongoframes import Frame
 from typing import Callable, TypeVar, List, Generic
-from resto.actions import Actions
 from resto.api import spec
+from resto.actions import DefaultActions, ActionsConnector
+
 __all__ = ['Controllers', 'controller', 'Route', 'Router', 'Get', 'Post', 'Put', 'Patch', 'Delete', 
     'get', 'post', 'put', 'patch', 'delete']
 
 Controllers = set()
 
+class RequestProxyLoader:
+    def __init__(self):
+        self.request = None
+    
+    def set_request(self, request_proxy):
+        self.request = request_proxy
+        return self.request
+    
+RequestProxy: RequestProxyLoader = RequestProxyLoader()
+
 Controller = TypeVar('Controller')
 class App(Generic[Controller]):
     ASYNC = False
     
-    def __init__(self, name: str, lazy_load: bool=False):
+    def __init__(self, name: str, request_proxy, lazy_load: bool=False):
         self.name = name
         self.app = self.build_app()
+        self.request_proxy = request_proxy
         
         if not lazy_load:
             self.load_controllers(Controllers)
+            
+        RequestProxy.set_request(request_proxy)
+    
+    def get_request_proxy(self):
+        return self.request_proxy 
     
     def build_app(self):
         raise NotImplementedError
@@ -41,10 +58,10 @@ class MethodGenerator:
             pass
         return inner_execute   
     
-    def _get(model, args=None, filter=None, query=None, projection=None):
+    def _get(model, actions, args=None, filter=None, query=None, projection=None):
         @spec.rest_validate(query=model.farms['Filterable'])
         def inner_get():
-            return Actions.fetcher(model, args=args, filter=filter, query=query, projection=projection)
+            return actions.fetcher(model, args=args, filter=filter, query=query, projection=projection)
         
         return inner_get
     
@@ -69,13 +86,14 @@ class MethodGenerator:
         return inner_delete
     
 class Route():
-    __slots__ = ['rule', 'methods', 'execute', 'options']
+    __slots__ = ['rule', 'actions', 'methods', 'execute', 'options']
 
-    def __init__(self, rule: str, methods: list[str], execute: Callable=None, options: dict=None):
+    def __init__(self, rule: str, methods: list[str], actions: ActionsConnector=None, execute: Callable=None, options: dict=None):
         self.rule = rule
         self.methods = methods
         self.execute = execute
         self.options = options or {}
+        self.actions = actions
         
     def get_name(self):
         return self.rule.replace('/', '').replace('<', '').replace('>', '')
@@ -95,8 +113,9 @@ class Router():
     def gen_method(cls, route: Route, model: type[Frame]):
         gen_options = {
             'model': model,
+            'actions': route.actions or DefaultActions.connector,
         }
-
+                    
         if route.execute:
             return route.execute
         
