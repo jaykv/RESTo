@@ -4,7 +4,7 @@ from resto.api import spec
 from resto.model import Model
 from resto.actions import ActionsConnector
 from resto.util import BaseUtil
-from resto.controller import RequestProxy
+from resto.request import RequestProxy
 
 Route = TypeVar('Route')
 

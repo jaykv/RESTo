@@ -1,6 +1,6 @@
 
 # RESTo (in development)
-Streamlined REST API framework with a focus on reducing boilerplate and fast-tracking CRUD actions with dynamic routes. Synergizes nicely with popular web frameworks and databases (through ORM/ODMs) to support a unified structure to bootstrap REST APIs quickly.
+RESTo makes it easy to build REST APIs quickly without worrying about the boring stuff. It provides structured abstractions to build flexible and dynamic routes based on your defined models and relations. Synergizes nicely with popular web frameworks and ORM/ODMs to support a plug-and-play approach to developing APIs.
 
 ## Features
 * Structured route builder

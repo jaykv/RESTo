@@ -3,6 +3,7 @@ from typing import Callable, TypeVar, List, Generic
 from resto.actions import DefaultActions, ActionsConnector
 from resto.method import MethodGenerator
 from resto.util import BaseUtil
+from resto.request import RequestProxy
 
 __all__ = [
     'Controllers',
@@ -22,18 +23,6 @@ __all__ = [
 ]
 
 Controllers = set()
-
-
-class RequestProxyLoader:
-    def __init__(self):
-        self.request = None
-
-    def set_request(self, request_proxy):
-        self.request = request_proxy
-        return self.request
-
-
-RequestProxy: RequestProxyLoader = RequestProxyLoader()
 
 Controller = TypeVar('Controller')
 

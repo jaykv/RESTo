@@ -29,9 +29,12 @@ def Response(
     status_code: int = 200,
     **raw_data
 ) -> ResponseModel:
-    response_data = [raw_data]
+    
+    response_data = []
     if data:
         response_data += BaseUtil.listify(data)
+    if raw_data:
+        response_data += raw_data
 
     response_messages = ['SUCCESS'] if not error else ['ERROR']
     if messages:

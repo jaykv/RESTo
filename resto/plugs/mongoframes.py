@@ -14,7 +14,6 @@ class MongoActions(ActionsConnector):
         model: type[Frame], args: dict, filter: dict, query: dict, projection: dict
     ) -> Frame:
         # get the user args
-        BaseUtil.error(query)
         return Response(data=[args, query])
 
     @staticmethod
