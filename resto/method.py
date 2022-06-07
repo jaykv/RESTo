@@ -35,7 +35,7 @@ class MethodGenerator:
 
             if route.hook:
                 return route.hook(results=results, **params)
-            
+
             return Response(data=results)
 
         return inner_execute

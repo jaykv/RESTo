@@ -12,7 +12,7 @@ class RESToFlask(App):
         @app.errorhandler(RESTError)
         def handle_error(e: RESTError):
             BaseUtil.error(e)
-            return Response(error=e, show_error=True)
+            return Response(error=e, bubble_error=True)
 
         return app
 

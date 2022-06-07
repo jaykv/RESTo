@@ -52,6 +52,12 @@ class Field:
         self.ref = ref
         self.sub = sub
 
+    def get(self, slot, default_val=None):
+        val = getattr(self, slot)
+        if not val:
+            return default_val
+        return val
+
     @staticmethod
     def by_name(fields: list, name: str) -> "Field":
         return filter(lambda field: field.name == name, fields)
@@ -59,6 +65,12 @@ class Field:
     @staticmethod
     def aliased(fields: list) -> dict[str, "Field"]:
         return {(field.alias or field.name): field for field in fields}
+
+    @property
+    def pydobj_normalized(self):
+        if isinstance(self.pydobj, tuple) and self.pydobj[1] == ...:
+            return (self.pydobj[0], None)
+        return self.pydobj
 
     @staticmethod
     def filtered_by(
@@ -87,7 +99,12 @@ class FarmBuilder:
         'ref_fields',
         'sub_fields',
     ]
-    properties = ['Insertable', 'Updatable', 'Filterable']
+    
+    properties = {
+        'Insertable': {'normalize': False},
+        'Updatable': {'normalize': False},
+        'Filterable': {'normalize': True},
+    }
 
     def __init__(self):
         self.all_fields = {}
@@ -105,14 +122,20 @@ class FarmBuilder:
             self.seed_field(field)
 
     def build_farms(self, model_name):
-        self.public_fields = Field.filtered_by(self.all_fields.values(), 'private', value=False)
-        self.private_fields = Field.filtered_by(self.all_fields.values(), 'private', value=True)
+        self.public_fields = Field.filtered_by(
+            self.all_fields.values(), 'private', value=False
+        )
+        self.private_fields = Field.filtered_by(
+            self.all_fields.values(), 'private', value=True
+        )
         self.ref_fields = Field.filtered_by(self.all_fields.values(), 'ref', value=True)
         self.sub_fields = Field.filtered_by(self.all_fields.values(), 'sub', value=True)
 
         for property in FarmBuilder.properties:
             self.farm_fields[property] = Field.filtered_by(
-                self.all_fields.values(), property, aliased=True
+                self.all_fields.values(),
+                property,
+                aliased=True,
             )
 
         farms = {}
@@ -127,11 +150,18 @@ class FarmBuilder:
             return
 
         farm_fields = self.farm_fields[property_name]
-        model_fields = {
-            field_name: field.pydobj for field_name, field in farm_fields.items()
-        }
+        field_attr = (
+            'pydobj_normalized'
+            if FarmBuilder.properties[property_name]['normalize']
+            else 'pydobj'
+        )
 
-        model = create_model(farm_name, **model_fields, **margs)
+        model_fields = {
+            field_name: field.get(field_attr)
+            for field_name, field in farm_fields.items()
+        }
+        print(model_fields)
+        model = create_model(farm_name, **model_fields)
         print(model.schema())
         return model
 
