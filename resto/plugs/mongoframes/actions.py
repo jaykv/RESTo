@@ -20,7 +20,7 @@ class MongoActions(ActionsConnector):
     ) -> list[Frame]:
         filter = strict_filter if strict_filter else args
         filter_query = build_filter_query(filter, projection) | query
-        docs = model.find_many(filter_query, projection=projection)
+        docs = model.find(filter_query, projection=projection)
         return docs
 
     @staticmethod

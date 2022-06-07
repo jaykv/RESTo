@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import TypeVar
-from resto.api import spec
+from resto.api import spec, Response
 from resto.model import Model
 from resto.actions import ActionsConnector
 from resto.util import BaseUtil
@@ -35,8 +35,8 @@ class MethodGenerator:
 
             if route.hook:
                 return route.hook(results=results, **params)
-
-            return results
+            
+            return Response(data=results)
 
         return inner_execute
 
@@ -69,7 +69,7 @@ class MethodGenerator:
             )
             if route.hook:
                 return route.hook(results=results, **params)
-            return results
+            return Response(data=results)
 
         return inner_get
 
@@ -90,7 +90,7 @@ class MethodGenerator:
             results = actions.inserter(model, data=RequestProxy.request.context.json)
             if route.hook:
                 return route.hook(results=results, **params)
-            return results
+            return Response(data=results)
 
         return inner_post
 
@@ -110,7 +110,7 @@ class MethodGenerator:
             results = actions.updater(model, data=RequestProxy.request.context.json)
             if route.hook:
                 return route.hook(results=results, **params)
-            return results
+            return Response(data=results)
 
         return inner_patch
 
@@ -132,7 +132,7 @@ class MethodGenerator:
             )
             if route.hook:
                 return route.hook(results=results, **params)
-            return results
+            return Response(data=results)
 
         return inner_put
 
@@ -148,6 +148,6 @@ class MethodGenerator:
             results = actions.deleter(model, filter=RequestProxy.request.context.json)
             if route.hook:
                 return route.hook(results=results, **params)
-            return results
+            return Response(data=results)
 
         return inner_delete

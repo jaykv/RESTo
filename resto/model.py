@@ -105,14 +105,10 @@ class FarmBuilder:
             self.seed_field(field)
 
     def build_farms(self, model_name):
-        self.public_fields = filter(
-            lambda field: field.private == False, self.all_fields
-        )
-        self.private_fields = filter(
-            lambda field: field.private == True, self.all_fields
-        )
-        self.ref_fields = filter(lambda field: field.ref is not False, self.all_fields)
-        self.sub_fields = filter(lambda field: field.sub is not False, self.all_fields)
+        self.public_fields = Field.filtered_by(self.all_fields.values(), 'private', value=False)
+        self.private_fields = Field.filtered_by(self.all_fields.values(), 'private', value=True)
+        self.ref_fields = Field.filtered_by(self.all_fields.values(), 'ref', value=True)
+        self.sub_fields = Field.filtered_by(self.all_fields.values(), 'sub', value=True)
 
         for property in FarmBuilder.properties:
             self.farm_fields[property] = Field.filtered_by(
