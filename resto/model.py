@@ -99,7 +99,7 @@ class FarmBuilder:
         'ref_fields',
         'sub_fields',
     ]
-    
+
     properties = {
         'Insertable': {'normalize': False},
         'Updatable': {'normalize': False},
@@ -160,8 +160,8 @@ class FarmBuilder:
             field_name: field.get(field_attr)
             for field_name, field in farm_fields.items()
         }
-        print(model_fields)
-        model = create_model(farm_name, **model_fields)
+
+        model = create_model(farm_name, **model_fields, **margs)
         print(model.schema())
         return model
 
