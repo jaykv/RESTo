@@ -25,11 +25,12 @@ class ResponseModel(BaseModel):
 def Response(
     data: Any = None,
     messages: Any = None,
-    error: bool = False,
+    error: Exception = None,
+    bubble_error: bool = False,
     status_code: int = 200,
     **raw_data
 ) -> ResponseModel:
-    
+
     response_data = []
     if data:
         response_data += BaseUtil.listify(data)
@@ -40,7 +41,11 @@ def Response(
     if messages:
         response_messages += BaseUtil.listify(messages)
 
-    return ResponseModel(data=response_data, messages=response_messages), status_code
+    if bubble_error and error:
+        response_messages += [error.message]
+
+    resp_code = error.get('status_code', status_code) if error else status_code
+    return ResponseModel(data=response_data, messages=response_messages), resp_code
 
 
 def register_spec(plug, app, **kwargs) -> SpecTree:

@@ -2,6 +2,7 @@ from flask import Flask, Blueprint, request
 from resto.controller import Router, App, Controller
 from resto.util import BaseUtil, RESTError
 from typing import List
+from resto.api import Response
 
 
 class RESToFlask(App):
@@ -9,9 +10,9 @@ class RESToFlask(App):
         app = Flask(self.name)
 
         @app.errorhandler(RESTError)
-        def handle_error(e):
+        def handle_error(e: RESTError):
             BaseUtil.error(e)
-            return f'ERROR: {e}'
+            return Response(error=e, show_error=True)
 
         return app
 

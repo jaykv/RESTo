@@ -132,62 +132,69 @@ class Router:
 
 
 class Get(Route):
-    __slots__ = ['args', 'filter', 'query', 'projection']
+    __slots__ = ['args', 'strict_filter', 'query', 'projection']
 
     GENERATOR = MethodGenerator._get
 
-    def __init__(self, rule, **rargs):
-        if 'methods' not in rargs:
-            rargs['methods'] = ['GET']
+    def __init__(
+        self,
+        rule: str,
+        args: dict = None,
+        query: dict = None,
+        strict_filter: dict = None,
+        projection: dict = None,
+        **route_kwargs,
+    ):
+        if 'methods' not in route_kwargs:
+            route_kwargs['methods'] = ['GET']
 
-        for slot in Get.__slots__:
-            if slot in rargs:
-                setattr(self, slot, rargs.pop(slot))
-            else:
-                # TODO: don't waste space storing None?
-                setattr(self, slot, None)
+        self.rule = rule
+        self.args = args
+        self.query = query
+        self.strict_filter = strict_filter
+        self.projection = projection
 
-        Route.__init__(self, rule, **rargs)
+        Route.__init__(self, rule, **route_kwargs)
 
 
 class Post(Route):
     GENERATOR = MethodGenerator._post
 
-    def __init__(self, rule, **rargs):
-        if 'methods' not in rargs:
-            rargs['methods'] = ['POST']
+    def __init__(self, rule, **route_kwargs):
+        if 'methods' not in route_kwargs:
+            route_kwargs['methods'] = ['POST']
 
-        Route.__init__(self, rule, **rargs)
+        Route.__init__(self, rule, **route_kwargs)
 
 
 class Put(Route):
     GENERATOR = MethodGenerator._put
 
-    def __init__(self, rule, **rargs):
-        if 'methods' not in rargs:
-            rargs['methods'] = ['PUT']
+    def __init__(self, rule, **route_kwargs):
+        if 'methods' not in route_kwargs:
+            route_kwargs['methods'] = ['PUT']
 
-        Route.__init__(self, rule, **rargs)
+        Route.__init__(self, rule, **route_kwargs)
 
 
 class Patch(Route):
     GENERATOR = MethodGenerator._patch
 
-    def __init__(self, rule, **rargs):
-        if 'methods' not in rargs:
-            rargs['methods'] = ['PATCH']
+    def __init__(self, rule, **route_kwargs):
+        if 'methods' not in route_kwargs:
+            route_kwargs['methods'] = ['PATCH']
 
-        Route.__init__(self, rule, **rargs)
+        Route.__init__(self, rule, **route_kwargs)
 
 
 class Delete(Route):
     GENERATOR = MethodGenerator._delete
 
-    def __init__(self, rule, **rargs):
-        if 'methods' not in rargs:
-            rargs['methods'] = ['DELETE']
+    def __init__(self, rule, **route_kwargs):
+        if 'methods' not in route_kwargs:
+            route_kwargs['methods'] = ['DELETE']
 
-        Route.__init__(self, rule, **rargs)
+        Route.__init__(self, rule, **route_kwargs)
 
 
 # from: https://github.com/marciojmo/flask-rest-decorators/blob/main/src/flask_rest_decorators/decorators.py

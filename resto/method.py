@@ -49,7 +49,7 @@ class MethodGenerator:
         route: Route,
     ):
         args = route.args or {}
-        filter = route.filter or {}
+        strict_filter = route.strict_filter or {}
         query = route.query or {}
         projection = route.projection or {}
 
@@ -61,7 +61,11 @@ class MethodGenerator:
             req_filters = RequestProxy.request.context.query
 
             results = actions.fetcher(
-                model, args=args, filter=filter, query=query, projection=projection
+                model,
+                args=args,
+                strict_filter=strict_filter,
+                query=query,
+                projection=projection,
             )
             if route.hook:
                 return route.hook(results=results, **params)

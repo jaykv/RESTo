@@ -17,7 +17,11 @@ DefaultActions: ActionsLoader = ActionsLoader()
 class ActionsConnector:
     @staticmethod
     def fetcher(
-        model: type[Model], args: dict, filter: dict, query: dict, projection: dict
+        model: type[Model],
+        args: dict,
+        strict_filter: dict,
+        query: dict,
+        projection: dict,
     ) -> Model:
         raise NotImplementedError
 

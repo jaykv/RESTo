@@ -1,10 +1,10 @@
-from mongoframes import Frame
+from resto.plugs.mongoframes.frame import SerializedFrame
 from resto.model import model, Field
 from datetime import datetime
 
 
 @model()
-class Users(Frame):
+class Users(SerializedFrame):
     fields = {
         'firstname': (str, ...),
         'lastname': (str, ...),
