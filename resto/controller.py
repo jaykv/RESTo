@@ -4,6 +4,7 @@ from resto.actions import DefaultActions, ActionsConnector
 from resto.method import MethodGenerator
 from resto.util import BaseUtil
 from resto.request import RequestProxy
+from resto.model import FarmBuilder
 
 __all__ = [
     'Controllers',
@@ -99,6 +100,17 @@ class Route:
     def get_rulename(self):
         return self.rule.replace('/', '_').replace('<', '').replace('>', '')
 
+    def parse_validator(self):
+        # parse fields schema into pydantic models for query and json validation
+        if 'query' in self.validator and isinstance(self.validator['query'], dict):
+            farm_name = '_'.join(self.methods) + self.get_rulename() + 'Query'
+            self.validator['query'] = FarmBuilder.build_lonely_farm(farm_name, self.validator['query'])
+            
+        if 'json' in self.validator and isinstance(self.validator['json'], dict):
+            farm_name = '_'.join(self.methods) + self.get_rulename() + 'Json'
+            self.validator['json'] = FarmBuilder.build_lonely_farm(farm_name, self.validator['json']) 
+        
+        return self.validator
 
 class Router:
     __slots__ = ['routes']
@@ -117,10 +129,11 @@ class Router:
 
     @classmethod
     def gen_method(cls, route: Route, model: type[Frame]):
+        
         gen_options = {
             'model': model,
             'actions': route.actions or DefaultActions.connector,
-            'validator': route.validator or {},
+            'validator': route.parse_validator() or {},
         }
 
         generator = MethodGenerator._execute if route.execute else route.GENERATOR

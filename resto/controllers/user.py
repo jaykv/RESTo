@@ -47,7 +47,7 @@ class UserController:
             '/hook/<id>',
             execute=hook_execute,
             hook=test_hook,
-            validator={'tags': ['users']},
+            validator={'query': {'username': (str, ...), 'version': (int, 1)}, 'tags': ['users']},
         ),
         # hook exec 2
         Get(

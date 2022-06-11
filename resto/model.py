@@ -145,7 +145,7 @@ class FarmBuilder:
 
         return farms
 
-    def build_farm(self, farm_name: str, property_name: str, **margs) -> BaseModel:
+    def build_farm(self, farm_name: str, property_name: str, **model_kwargs) -> BaseModel:
         if not property_name in FarmBuilder.properties:
             return
 
@@ -161,8 +161,7 @@ class FarmBuilder:
             for field_name, field in farm_fields.items()
         }
 
-        model = create_model(farm_name, **model_fields, **margs)
-        print(model.schema())
+        model = create_model(farm_name, **model_fields, **model_kwargs)
         return model
 
     def load_fields(self, schema):
@@ -173,3 +172,9 @@ class FarmBuilder:
                 field.name = fieldname
 
             self.seed_field(field)
+
+
+    @staticmethod
+    def build_lonely_farm(name: str, fields: dict[str, Any], **model_kwargs):
+        model = create_model(name, **fields, **model_kwargs)
+        return model
