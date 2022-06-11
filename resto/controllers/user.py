@@ -33,12 +33,13 @@ class UserController:
     model = Users
     router = Router(
         # dynamic get- fetch
-        Get('/', query={'test': 123}),
+        Get('/', doc='fetch users', query={'test': 123}),
         # custom executes
-        Get('/lambda/<id>', execute=lambda id: f'lambda user {id}'),
+        Get('/lambda/<id>', doc='lambda test', execute=lambda id: f'lambda user {id}'),
         # hook exec 1
         Get(
             '/hook/<id>',
+            doc='hook execute by id',
             execute=hook_execute,
             hook=test_hook,
             validator={'query': {'username': (str, ...), 'version': (int, 1)}, 'tags': ['users']},
@@ -46,6 +47,7 @@ class UserController:
         # hook exec 2
         Get(
             '/hookname/<name>',
+            doc='hook execute by name',
             execute=hook_execute,
             hook=test_hookname,
             validator={'tags': ['users']},
@@ -53,14 +55,16 @@ class UserController:
         # custom executor
         Post(
             '/<id>', 
+            doc='update user by id',
             validator={'json': model.farms['Updatable']}, 
             execute=(post_test, 
                      {'upsert': True})
         ),
-        Delete('/<id>', execute=delete_test),
+        Delete('/<id>', doc='delete user by id', execute=delete_test),
     )
 
     @get(rule='/<id>')
     @spec.validate(resp=SpecResponse(HTTP_200=ResponseModel), tags=['users'])
     def get_user(id):
+        '''get user by id'''
         return Response(f'get user {id}')

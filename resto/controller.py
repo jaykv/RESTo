@@ -66,6 +66,7 @@ def controller(endpoint):
 class Route:
     __slots__ = [
         'rule',
+        'doc',
         'actions',
         'validator',
         'methods',
@@ -80,6 +81,7 @@ class Route:
         self,
         rule: str,
         methods: list[str],
+        doc: str = None,
         actions: ActionsConnector = None,
         validator: dict = None,
         execute: Union[Callable, tuple] = None,
@@ -87,6 +89,7 @@ class Route:
         hook: Callable = None,
     ):
         self.rule = rule
+        self.doc = doc
         self.methods = methods
         self.options = options or {}
         self.actions = actions
@@ -154,6 +157,10 @@ class Router:
         method.__name__ = (
             f'{type(route).__name__}_{route.get_rulename()}_{model.__name__}'
         )
+        
+        if route.doc:
+            method.__doc__ = route.doc
+            
         return method
 
 
