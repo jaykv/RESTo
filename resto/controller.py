@@ -1,5 +1,5 @@
 from mongoframes import Frame
-from typing import Callable, TypeVar, List, Generic
+from typing import Callable, TypeVar, List, Generic, Union
 from resto.actions import DefaultActions, ActionsConnector
 from resto.method import MethodGenerator
 from resto.util import BaseUtil
@@ -82,35 +82,48 @@ class Route:
         methods: list[str],
         actions: ActionsConnector = None,
         validator: dict = None,
-        execute: Callable = None,
+        execute: Union[Callable, tuple] = None,
         options: dict = None,
         hook: Callable = None,
     ):
         self.rule = rule
         self.methods = methods
-        self.execute = execute
         self.options = options or {}
         self.actions = actions
-        self.validator = validator or {}
         self.hook = hook
+        self.execute = self.parse_execute(execute)
+        self.validator = self.parse_validator(validator)
+        
 
-    def is_dynamic(self):
+    def is_dynamic(self) -> bool:
         return '<' in self.rule and '>' in self.rule
 
-    def get_rulename(self):
+    def get_rulename(self) -> str:
         return self.rule.replace('/', '_').replace('<', '').replace('>', '')
 
-    def parse_validator(self):
-        # parse fields schema into pydantic models for query and json validation
-        if 'query' in self.validator and isinstance(self.validator['query'], dict):
-            farm_name = '_'.join(self.methods) + self.get_rulename() + 'Query'
-            self.validator['query'] = FarmBuilder.build_lonely_farm(farm_name, self.validator['query'])
-            
-        if 'json' in self.validator and isinstance(self.validator['json'], dict):
-            farm_name = '_'.join(self.methods) + self.get_rulename() + 'Json'
-            self.validator['json'] = FarmBuilder.build_lonely_farm(farm_name, self.validator['json']) 
+    def parse_execute(self, execute: Union[Callable, tuple]) -> tuple:
+        if not execute:
+            return None
         
-        return self.validator
+        if not isinstance(execute, tuple):
+            return (execute, None)
+        
+        return execute
+    
+    def parse_validator(self, validator: dict) -> dict:
+        if not validator:
+            return {}
+        
+        # parse fields schema into pydantic models for query and json validation
+        if 'query' in validator and isinstance(validator['query'], dict):
+            farm_name = '_'.join(self.methods) + self.get_rulename() + 'Query'
+            validator['query'] = FarmBuilder.build_lonely_farm(farm_name, validator['query'])
+            
+        if 'json' in validator and isinstance(validator['json'], dict):
+            farm_name = '_'.join(self.methods) + self.get_rulename() + 'Json'
+            validator['json'] = FarmBuilder.build_lonely_farm(farm_name, validator['json']) 
+        
+        return validator
 
 class Router:
     __slots__ = ['routes']
@@ -128,12 +141,12 @@ class Router:
             self.gen_method(route, model)
 
     @classmethod
-    def gen_method(cls, route: Route, model: type[Frame]):
+    def gen_method(cls, route: Route, model: type[Frame]) -> Callable:
         
         gen_options = {
             'model': model,
             'actions': route.actions or DefaultActions.connector,
-            'validator': route.parse_validator() or {},
+            'validator': route.validator or {},
         }
 
         generator = MethodGenerator._execute if route.execute else route.GENERATOR

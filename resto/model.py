@@ -8,6 +8,14 @@ Model = TypeVar('Model')
 
 def model():
     def register_model(cls):
+        # setup farm bulilder
+        farmbuilder = FarmBuilder()
+        farmbuilder.load_fields(cls.fields)
+
+        # build farms
+        cls.farms = farmbuilder.build_farms(cls.__name__)
+        cls.farmbuilder = farmbuilder
+        
         Models.add(cls)
         return cls
 

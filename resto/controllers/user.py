@@ -3,27 +3,21 @@ from resto.controller import controller, Get, Post, Delete, Router, get
 from resto.api import spec, ResponseModel, Response
 from spectree import Response as SpecResponse
 from resto.method import MethodParams
-
 from resto.util import BaseUtil
 
-
-def exec_test():
-    return Response(output='exec')
-
-
-def post_test():
-    return 'post'
+def post_test(request, context: MethodParams, upsert: bool=False, id=None, **params):
+    return Response(request=str(request), context=str(context), upsert=upsert, output=f'completed {id}')
 
 
 def delete_test(id):
     return f'delete {id}'
 
 
-def hook_execute(method_params: MethodParams, **req_args):
-    BaseUtil.error(method_params, req_args)
-    req_args.update({'success': True})
-    BaseUtil.error('results', req_args)
-    return req_args
+def hook_execute(request, context: MethodParams, **params):
+    BaseUtil.error(context, params)
+    params.update({'success': True})
+    BaseUtil.error('results', params)
+    return params
 
 
 def test_hook(results, **params):
@@ -56,7 +50,13 @@ class UserController:
             hook=test_hookname,
             validator={'tags': ['users']},
         ),
-        Post('/<id>', execute=post_test),
+        # custom executor
+        Post(
+            '/<id>', 
+            validator={'json': model.farms['Updatable']}, 
+            execute=(post_test, 
+                     {'upsert': True})
+        ),
         Delete('/<id>', execute=delete_test),
     )
 

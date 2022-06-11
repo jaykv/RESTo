@@ -35,7 +35,7 @@ def Response(
     if data:
         response_data += BaseUtil.listify(data)
     if raw_data:
-        response_data += raw_data
+        response_data += [raw_data]
 
     response_messages = ['SUCCESS'] if not error else ['ERROR']
     if messages:
