@@ -6,6 +6,7 @@ from resto.method import MethodParams
 from resto.util import BaseUtil
 
 def post_test(request, context: MethodParams, upsert: bool=False, id=None, **params):
+    print(request.headers)
     return Response(request=str(request), context=str(context), upsert=upsert, output=f'completed {id}')
 
 
@@ -15,6 +16,7 @@ def delete_test(id):
 
 def hook_execute(request, context: MethodParams, **params):
     BaseUtil.error(context, params)
+    print(request.headers.get('Authorization'))
     params.update({'success': True})
     BaseUtil.error('results', params)
     return params
@@ -31,6 +33,7 @@ def test_hookname(results, **params):
 @controller('/users')
 class UserController:
     model = Users
+    security = {'auth_apiKey': []}
     router = Router(
         # dynamic get- fetch
         Get('/', doc='fetch users', query={'test': 123}),
@@ -42,7 +45,7 @@ class UserController:
             doc='hook execute by id',
             execute=hook_execute,
             hook=test_hook,
-            validator={'query': {'username': (str, ...), 'version': (int, 1)}, 'tags': ['users']},
+            validator={'security': {'auth_apiKey': []}, 'query': {'username': (str, ...), 'version': (int, 1)}, 'tags': ['users']},
         ),
         # hook exec 2
         Get(

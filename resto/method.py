@@ -28,10 +28,12 @@ class MethodGenerator:
         route: Route,
     ):
         context = MethodParams(model, actions, route)
-
+        execute = route.execute[0]
+        execute_params = route.execute[1] or {}
+        
         @spec.rest_validate(**validator)
         def inner_execute(**params):
-            results = route.execute[0](request=RequestProxy.request, context=context, **route.execute[1], **params)
+            results = execute(request=RequestProxy.request, context=context, **execute_params, **params)
 
             if route.hook:
                 return route.hook(results=results, **params)
