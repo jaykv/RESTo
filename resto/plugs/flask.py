@@ -22,9 +22,7 @@ class RESToFlask(App):
         controller.__blueprint__ = Blueprint(
             controller.__name__, controller.__module__, url_prefix=controller.endpoint
         )
-        controller.register_routes = lambda app: app.register_blueprint(
-            controller.__blueprint__
-        )
+        controller.register_routes = lambda app: app.register_blueprint(controller.__blueprint__)
 
         # restify controller routes by setting rest metadata
         for route in controller.router.routes:

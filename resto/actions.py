@@ -2,6 +2,7 @@ from typing import TypeVar
 
 Model = TypeVar('Model')
 
+
 class ActionsConnector:
     @staticmethod
     def fetcher(
@@ -24,6 +25,7 @@ class ActionsConnector:
     @staticmethod
     def deleter(model: type[Model], obj: Model, id: str, filter: dict = None) -> Model:
         raise NotImplementedError
+
 
 class ActionsLoader:
     def __init__(self):

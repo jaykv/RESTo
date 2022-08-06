@@ -30,10 +30,12 @@ class MethodGenerator:
         context = MethodParams(model, actions, route)
         execute = route.execute[0]
         execute_params = route.execute[1] or {}
-        
+
         @spec.rest_validate(**validator)
         def inner_execute(**params):
-            results = execute(request=RequestProxy.request, context=context, **execute_params, **params)
+            results = execute(
+                request=RequestProxy.request, context=context, **execute_params, **params
+            )
 
             if route.hook:
                 return route.hook(results=results, **params)
@@ -80,7 +82,6 @@ class MethodGenerator:
         validator: dict,
         route: Route,
     ):
-
         @spec.rest_validate(**validator)
         def inner_post(**params):
             results = actions.inserter(model, data=RequestProxy.request.context.json)
@@ -117,9 +118,7 @@ class MethodGenerator:
     ):
         @spec.rest_validate(**validator)
         def inner_put(**params):
-            results = actions.updater(
-                model, data=RequestProxy.request.context.json, upsert=True
-            )
+            results = actions.updater(model, data=RequestProxy.request.context.json, upsert=True)
             if route.hook:
                 return route.hook(results=results, **params)
             return Response(data=results)

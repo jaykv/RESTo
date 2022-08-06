@@ -16,7 +16,7 @@ def model():
         # build farms
         cls.farms = farmbuilder.build_farms(cls.__name__)
         cls.farmbuilder = farmbuilder
-        
+
         Models.add(cls)
         return cls
 
@@ -92,16 +92,13 @@ class Field:
                 if getattr(field, feature) == value
             }
         else:
-            return {
-                field.name: field
-                for field in fields
-                if getattr(field, feature) == value
-            }
-            
+            return {field.name: field for field in fields if getattr(field, feature) == value}
+
     @classmethod
     def from_json(cls, json_data: bytes) -> "Field":
         field = orjson.loads(json_data)
         return cls(**field)
+
 
 class FarmBuilder:
     __slots__ = [
@@ -135,12 +132,8 @@ class FarmBuilder:
             self.seed_field(field)
 
     def build_farms(self, model_name):
-        self.public_fields = Field.filtered_by(
-            self.all_fields.values(), 'private', value=False
-        )
-        self.private_fields = Field.filtered_by(
-            self.all_fields.values(), 'private', value=True
-        )
+        self.public_fields = Field.filtered_by(self.all_fields.values(), 'private', value=False)
+        self.private_fields = Field.filtered_by(self.all_fields.values(), 'private', value=True)
         self.ref_fields = Field.filtered_by(self.all_fields.values(), 'ref', value=True)
         self.sub_fields = Field.filtered_by(self.all_fields.values(), 'sub', value=True)
 
@@ -164,14 +157,11 @@ class FarmBuilder:
 
         farm_fields = self.farm_fields[property_name]
         field_attr = (
-            'pydobj_normalized'
-            if FarmBuilder.properties[property_name]['normalize']
-            else 'pydobj'
+            'pydobj_normalized' if FarmBuilder.properties[property_name]['normalize'] else 'pydobj'
         )
 
         model_fields = {
-            field_name: field.get(field_attr)
-            for field_name, field in farm_fields.items()
+            field_name: field.get(field_attr) for field_name, field in farm_fields.items()
         }
 
         model = create_model(farm_name, **model_fields, **model_kwargs)
@@ -185,7 +175,6 @@ class FarmBuilder:
                 field.name = fieldname
 
             self.seed_field(field)
-
 
     @staticmethod
     def build_lonely_farm(name: str, fields: dict[str, Any], **model_kwargs):

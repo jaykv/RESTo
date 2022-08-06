@@ -95,18 +95,20 @@ class Route:
         self.hook = hook
         self.execute = self.parse_execute(execute)
         self.validator = self.parse_validator(validator)
-        
+
         self.validate()
 
     def validate(self):
-        assert(isinstance(self.rule, str))
-        assert(isinstance(self.methods, list))
-        assert(isinstance(self.doc, str) or self.doc is None)
-        assert(isinstance(self.actions, ActionsConnector) or self.actions is None)
-        assert(callable(self.hook) or self.hook is None)
-        assert(isinstance(self.execute, tuple) or callable(self.execute) or self.execute is None)
-        assert(isinstance(self.validator, dict) or callable(self.validator) or self.validator is None)
-        
+        assert isinstance(self.rule, str)
+        assert isinstance(self.methods, list)
+        assert isinstance(self.doc, str) or self.doc is None
+        assert isinstance(self.actions, ActionsConnector) or self.actions is None
+        assert callable(self.hook) or self.hook is None
+        assert isinstance(self.execute, tuple) or callable(self.execute) or self.execute is None
+        assert (
+            isinstance(self.validator, dict) or callable(self.validator) or self.validator is None
+        )
+
     def is_dynamic(self) -> bool:
         return '<' in self.rule and '>' in self.rule
 
@@ -116,25 +118,25 @@ class Route:
     def parse_execute(self, execute: Union[Callable, tuple]) -> tuple:
         if not execute:
             return None
-        
+
         if not isinstance(execute, tuple):
             return (execute, None)
-        
+
         return execute
-    
+
     def parse_validator(self, validator: dict) -> dict:
         if not validator:
             return {}
-        
+
         # parse fields schema into pydantic models for query and json validation
         if 'query' in validator and isinstance(validator['query'], dict):
             farm_name = '_'.join(self.methods) + self.get_rulename() + 'Query'
             validator['query'] = FarmBuilder.build_lonely_farm(farm_name, validator['query'])
-            
+
         if 'json' in validator and isinstance(validator['json'], dict):
             farm_name = '_'.join(self.methods) + self.get_rulename() + 'Json'
-            validator['json'] = FarmBuilder.build_lonely_farm(farm_name, validator['json']) 
-        
+            validator['json'] = FarmBuilder.build_lonely_farm(farm_name, validator['json'])
+
         return validator
 
 
@@ -161,16 +163,17 @@ class Get(Route):
         self.default_projection = default_projection
 
         Route.__init__(self, rule, **route_kwargs)
-        
+
         self.validate()
 
     def validate(self):
         print(self.default_args)
-        assert(isinstance(self.default_args, dict) or self.default_args is None)
-        assert(isinstance(self.default_query, dict) or self.default_query is None)
-        assert(isinstance(self.strict_filter, dict) or self.strict_filter is None)
-        assert(isinstance(self.default_projection, dict) or self.default_projection is None)
-        
+        assert isinstance(self.default_args, dict) or self.default_args is None
+        assert isinstance(self.default_query, dict) or self.default_query is None
+        assert isinstance(self.strict_filter, dict) or self.strict_filter is None
+        assert isinstance(self.default_projection, dict) or self.default_projection is None
+
+
 class Post(Route):
     GENERATOR = MethodGenerator._post
 
@@ -209,7 +212,8 @@ class Delete(Route):
             route_kwargs['methods'] = ['DELETE']
 
         Route.__init__(self, rule, **route_kwargs)
-    
+
+
 # from: https://github.com/marciojmo/flask-rest-decorators/blob/main/src/flask_rest_decorators/decorators.py
 def get(rule, **options):
     def method_wrapper(f):
