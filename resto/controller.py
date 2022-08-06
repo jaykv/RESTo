@@ -66,10 +66,10 @@ def controller(endpoint):
 class Route:
     __slots__ = [
         'rule',
+        'methods',
         'doc',
         'actions',
         'validator',
-        'methods',
         'execute',
         'options',
         'hook',
@@ -80,7 +80,7 @@ class Route:
     def __init__(
         self,
         rule: str,
-        methods: list[str],
+        methods: list[str] = None,
         doc: str = None,
         actions: ActionsConnector = None,
         validator: dict = None,
@@ -138,6 +138,80 @@ class Route:
         
         return validator
 
+
+class Get(Route):
+    __slots__ = ['default_args', 'strict_filter', 'default_query', 'default_projection']
+
+    GENERATOR = MethodGenerator._get
+
+    def __init__(
+        self,
+        rule: str,
+        default_args: dict = None,
+        default_query: dict = None,
+        strict_filter: dict = None,
+        default_projection: dict = None,
+        **route_kwargs,
+    ):
+        if 'methods' not in route_kwargs:
+            route_kwargs['methods'] = ['GET']
+
+        self.default_args = default_args
+        self.default_query = default_query
+        self.strict_filter = strict_filter
+        self.default_projection = default_projection
+
+        Route.__init__(self, rule, **route_kwargs)
+        
+        self.validate()
+
+    def validate(self):
+        print(self.default_args)
+        assert(isinstance(self.default_args, dict) or self.default_args is None)
+        assert(isinstance(self.default_query, dict) or self.default_query is None)
+        assert(isinstance(self.strict_filter, dict) or self.strict_filter is None)
+        assert(isinstance(self.default_projection, dict) or self.default_projection is None)
+        
+class Post(Route):
+    GENERATOR = MethodGenerator._post
+
+    def __init__(self, rule: str, **route_kwargs):
+        if 'methods' not in route_kwargs:
+            route_kwargs['methods'] = ['POST']
+
+        Route.__init__(self, rule, **route_kwargs)
+
+
+class Put(Route):
+    GENERATOR = MethodGenerator._put
+
+    def __init__(self, rule: str, **route_kwargs):
+        if 'methods' not in route_kwargs:
+            route_kwargs['methods'] = ['PUT']
+
+        Route.__init__(self, rule, **route_kwargs)
+
+
+class Patch(Route):
+    GENERATOR = MethodGenerator._patch
+
+    def __init__(self, rule: str, **route_kwargs):
+        if 'methods' not in route_kwargs:
+            route_kwargs['methods'] = ['PATCH']
+
+        Route.__init__(self, rule, **route_kwargs)
+
+
+class Delete(Route):
+    GENERATOR = MethodGenerator._delete
+
+    def __init__(self, rule: str, **route_kwargs):
+        if 'methods' not in route_kwargs:
+            route_kwargs['methods'] = ['DELETE']
+
+        Route.__init__(self, rule, **route_kwargs)
+
+
 class Router:
     __slots__ = ['routes']
 
@@ -172,79 +246,7 @@ class Router:
             method.__doc__ = route.doc
             
         return method
-
-
-class Get(Route):
-    __slots__ = ['args', 'strict_filter', 'query', 'projection']
-
-    GENERATOR = MethodGenerator._get
-
-    def __init__(
-        self,
-        default_args: dict = None,
-        default_query: dict = None,
-        strict_filter: dict = None,
-        default_projection: dict = None,
-        **route_kwargs,
-    ):
-        if 'methods' not in route_kwargs:
-            route_kwargs['methods'] = ['GET']
-
-        self.default_args = default_args
-        self.default_query = default_query
-        self.strict_filter = strict_filter
-        self.default_projection = default_projection
-
-        Route.__init__(self, **route_kwargs)
-        
-        self.validate()
-
-    def validate(self):
-        assert(isinstance(self.default_args, dict))
-        assert(isinstance(self.default_query, dict))
-        assert(isinstance(self.strict_filter, dict))
-        assert(isinstance(self.default_projection, dict))
-        
-class Post(Route):
-    GENERATOR = MethodGenerator._post
-
-    def __init__(self, rule, **route_kwargs):
-        if 'methods' not in route_kwargs:
-            route_kwargs['methods'] = ['POST']
-
-        Route.__init__(self, rule, **route_kwargs)
-
-
-class Put(Route):
-    GENERATOR = MethodGenerator._put
-
-    def __init__(self, rule, **route_kwargs):
-        if 'methods' not in route_kwargs:
-            route_kwargs['methods'] = ['PUT']
-
-        Route.__init__(self, rule, **route_kwargs)
-
-
-class Patch(Route):
-    GENERATOR = MethodGenerator._patch
-
-    def __init__(self, rule, **route_kwargs):
-        if 'methods' not in route_kwargs:
-            route_kwargs['methods'] = ['PATCH']
-
-        Route.__init__(self, rule, **route_kwargs)
-
-
-class Delete(Route):
-    GENERATOR = MethodGenerator._delete
-
-    def __init__(self, rule, **route_kwargs):
-        if 'methods' not in route_kwargs:
-            route_kwargs['methods'] = ['DELETE']
-
-        Route.__init__(self, rule, **route_kwargs)
-
-
+    
 # from: https://github.com/marciojmo/flask-rest-decorators/blob/main/src/flask_rest_decorators/decorators.py
 def get(rule, **options):
     def method_wrapper(f):

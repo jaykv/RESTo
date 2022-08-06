@@ -36,7 +36,7 @@ class UserController:
     security = {'auth_apiKey': []}
     router = Router(
         # dynamic get- fetch
-        Get('/', doc='fetch users', query={'test': 123}),
+        Get('/', doc='fetch users', default_query={'test': 123}),
         # custom executes
         Get('/lambda/<id>', doc='lambda test', execute=lambda id: f'lambda user {id}'),
         # hook exec 1
