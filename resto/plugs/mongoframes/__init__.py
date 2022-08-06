@@ -18,7 +18,6 @@ class MongoModeler:
         return model
 
     @staticmethod
-    def load_models():
-        # TODO: switch this to env variable
-        Frame._client = MongoClient('mongodb://localhost:27017/testdb')
+    def load_models(mongo_uri: str):
+        Frame._client = MongoClient(mongo_uri)
         return list(map(MongoModeler.load_model, Models))

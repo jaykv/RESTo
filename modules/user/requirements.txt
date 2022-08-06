@@ -1,1 +1,8 @@
-RESTo
+pydantic==1.9.1
+spectree==0.10.0
+orjson
+# Plug requirements
+flask==2.1.2
+mongoframes==1.3.6
+pymongo==4.1.1
+gunicorn

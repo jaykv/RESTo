@@ -22,10 +22,7 @@ class ResponseModel(BaseModel):
     messages: List[str]
 
 
-class BaseResponse:
-    
-    def __init__(self,
-        data: Any = None,
+def Response(data: Any = None,
         messages: Any = None,
         error: Exception = None,
         bubble_error: bool = False,
