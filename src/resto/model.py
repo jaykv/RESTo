@@ -1,6 +1,7 @@
 from typing import Any, TypeVar
 from pydantic import BaseModel, create_model
 from resto.util import BaseUtil
+import orjson
 
 Models = set()
 Model = TypeVar('Model')
@@ -96,7 +97,11 @@ class Field:
                 for field in fields
                 if getattr(field, feature) == value
             }
-
+            
+    @classmethod
+    def from_json(cls, json_data: bytes) -> "Field":
+        field = orjson.loads(json_data)
+        return cls(**field)
 
 class FarmBuilder:
     __slots__ = [

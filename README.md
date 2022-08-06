@@ -1,13 +1,16 @@
 
 # RESTo (in development)
-RESTo makes it easy to build REST APIs quickly without worrying about the boring stuff. It provides structured abstractions to build flexible and dynamic routes based on your defined models and relations. Synergizes nicely with popular web frameworks and ORM/ODMs to support a plug-and-play approach to developing APIs.
+RESTo makes it easy to build APIs quickly without focusing on the redundant and boring stuff. It provides structured abstractions to build flexible and dynamic routes based on your defined models and relations. It aims to synergize nicely with popular web frameworks and ORM/ODMs to support a plug-and-play approach to developing APIs.
 
 ## Features
 * Structured route builder
 * Dynamic CRUD routes generation and configuration
 * Built-in request & response validation
+* OpenAPI spec generation- Swagger and Redoc support
 * SQL/NoSQL ORM/ODM support to perform DB operations
 * Customizable plugs
+* Modular architecture to support microservices
+* OpenAPI security and authentication schemes
 
 ### Todo:
 * Base CRUD routes generation based on controller configuration
@@ -16,7 +19,8 @@ RESTo makes it easy to build REST APIs quickly without worrying about the boring
 * Search flags to support flexible data-filtering through endpoint args
 * SQLalchemy support (model connector)
 * Falcon and Starlette support (controller connectors)
- 
+* Adaptable validators- dynamic filtering and querying
+
 ## Plugs
 Plugs are external frameworks and database ORM/ODMs that "plug" into the RESTo framework through connectors. Connectors bridge the gap between RESTo's abstraction layer- linking the frameworks through an interface for either AppBuilder/Controller or Actions/Model.
 
