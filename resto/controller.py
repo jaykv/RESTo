@@ -1,6 +1,6 @@
 from mongoframes import Frame
 from typing import Callable, TypeVar, List, Generic, Union
-from resto.actions import DefaultActions, ActionsConnector
+from resto.actions import Actions, ActionsConnector
 from resto.method import MethodGenerator
 from resto.util import BaseUtil
 from resto.request import RequestProxy
@@ -10,7 +10,6 @@ __all__ = [
     'Controllers',
     'controller',
     'Route',
-    'Router',
     'Get',
     'Post',
     'Put',
@@ -210,42 +209,6 @@ class Delete(Route):
             route_kwargs['methods'] = ['DELETE']
 
         Route.__init__(self, rule, **route_kwargs)
-
-
-class Router:
-    __slots__ = ['routes']
-
-    def __init__(self, *route_list):
-        self.routes = set()
-        valid_routes = filter(lambda route: isinstance(route, Route), route_list)
-        list(map(self.add, valid_routes))
-
-    def add(self, route: Route):
-        self.routes.add(route)
-
-    def parse_routes(self, model: type[Frame]):
-        for route in self.routes:
-            self.gen_method(route, model)
-
-    @classmethod
-    def gen_method(cls, route: Route, model: type[Frame]) -> Callable:
-        
-        gen_options = {
-            'model': model,
-            'actions': route.actions or DefaultActions.connector,
-            'validator': route.validator or {},
-        }
-
-        generator = MethodGenerator._execute if route.execute else route.GENERATOR
-        method = generator(**gen_options, route=route)
-        method.__name__ = (
-            f'{type(route).__name__}_{route.get_rulename()}_{model.__name__}'
-        )
-        
-        if route.doc:
-            method.__doc__ = route.doc
-            
-        return method
     
 # from: https://github.com/marciojmo/flask-rest-decorators/blob/main/src/flask_rest_decorators/decorators.py
 def get(rule, **options):

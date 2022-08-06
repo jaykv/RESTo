@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 from resto.model import FarmBuilder, Models
-from resto.actions import DefaultActions
+from resto.actions import Actions
 from mongoframes import Frame
 from .actions import MongoActions
 
@@ -8,7 +8,7 @@ from .actions import MongoActions
 class MongoModeler:
     @staticmethod
     def load_actions():
-        DefaultActions.set_connector(MongoActions)
+        Actions.set_connector(MongoActions)
 
     @staticmethod
     def load_model(model: type[Frame]):

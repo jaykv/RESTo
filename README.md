@@ -13,7 +13,6 @@ RESTo makes it easy to build APIs quickly without focusing on the redundant and 
 * OpenAPI security and authentication schemes
 
 ### Todo:
-* Base CRUD routes generation based on controller configuration
 * Model relationships
 * Dynamic cascades based on Model rules
 * Search flags to support flexible data-filtering through endpoint args

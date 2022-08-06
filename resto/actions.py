@@ -2,18 +2,6 @@ from typing import TypeVar
 
 Model = TypeVar('Model')
 
-
-class ActionsLoader:
-    def __init__(self):
-        self.connector = None
-
-    def set_connector(self, action_connector):
-        self.connector = action_connector
-
-
-DefaultActions: ActionsLoader = ActionsLoader()
-
-
 class ActionsConnector:
     @staticmethod
     def fetcher(
@@ -36,3 +24,13 @@ class ActionsConnector:
     @staticmethod
     def deleter(model: type[Model], obj: Model, id: str, filter: dict = None) -> Model:
         raise NotImplementedError
+
+class ActionsLoader:
+    def __init__(self):
+        self.connector: ActionsConnector = None
+
+    def set_connector(self, action_connector: ActionsConnector):
+        self.connector = action_connector
+
+
+Actions: ActionsLoader = ActionsLoader()

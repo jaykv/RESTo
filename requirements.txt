@@ -1,5 +1,5 @@
 pydantic==1.9.1
-spectree==0.10.0
+spectree==0.10.4
 
 # Plug requirements
 flask==2.1.2

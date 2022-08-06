@@ -55,10 +55,7 @@ class MethodGenerator:
         default_query = route.default_query or {}
         default_projection = route.default_projection or {}
 
-        validator_args = {'query': model.farms['Filterable']}
-        validator_args.update(validator)
-
-        @spec.rest_validate(**validator_args)
+        @spec.rest_validate(**validator)
         def inner_get(**params):
             req_filters = RequestProxy.request.context.query
 
@@ -84,10 +81,7 @@ class MethodGenerator:
         route: Route,
     ):
 
-        validator_args = {'json': model.farms['Insertable']}
-        validator_args.update(validator)
-
-        @spec.rest_validate(**validator_args)
+        @spec.rest_validate(**validator)
         def inner_post(**params):
             results = actions.inserter(model, data=RequestProxy.request.context.json)
             if route.hook:
@@ -104,10 +98,7 @@ class MethodGenerator:
         validator: dict,
         route: Route,
     ):
-
-        validator_args = {'json': model.farms['Updatable']}
-        validator_args.update(validator)
-
+        @spec.rest_validate(**validator)
         def inner_patch(**params):
             results = actions.updater(model, data=RequestProxy.request.context.json)
             if route.hook:
@@ -124,10 +115,7 @@ class MethodGenerator:
         validator: dict,
         route: Route,
     ):
-
-        validator_args = {'json': model.farms['Updatable']}
-        validator_args.update(validator)
-
+        @spec.rest_validate(**validator)
         def inner_put(**params):
             results = actions.updater(
                 model, data=RequestProxy.request.context.json, upsert=True
@@ -146,6 +134,7 @@ class MethodGenerator:
         validator: dict,
         route: Route,
     ):
+        @spec.rest_validate(**validator)
         def inner_delete(**params):
             results = actions.deleter(model, filter=RequestProxy.request.context.json)
             if route.hook:

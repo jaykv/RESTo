@@ -1,18 +1,11 @@
 from resto.models.user import Users
-from resto.controller import controller, Get, Post, Delete, Router, get
+from resto.controller import controller, Get, get
 from resto.api import spec, ResponseModel, Response
 from spectree import Response as SpecResponse
 from resto.method import MethodParams
+from resto.router import ActionRouter
 from resto.util import BaseUtil
-
-def post_test(request, context: MethodParams, upsert: bool=False, id=None, **params):
-    print(request.headers)
-    return Response(request=str(request), context=str(context), upsert=upsert, output=f'completed {id}')
-
-
-def delete_test(id):
-    return f'delete {id}'
-
+from resto.actions import Actions
 
 def hook_execute(request, context: MethodParams, **params):
     BaseUtil.error(context, params)
@@ -34,7 +27,8 @@ def test_hookname(results, **params):
 class UserController:
     model = Users
     security = {'auth_apiKey': []}
-    router = Router(
+    router = ActionRouter(model, ['users'])
+    router.add(
         # dynamic get- fetch
         Get('/', doc='fetch users', default_query={'test': 123}),
         # custom executes
@@ -55,19 +49,12 @@ class UserController:
             hook=test_hookname,
             validator={'tags': ['users']},
         ),
-        # custom executor
-        Post(
-            '/<id>', 
-            doc='update user by id',
-            validator={'json': model.farms['Updatable']}, 
-            execute=(post_test, 
-                     {'upsert': True})
-        ),
-        Delete('/<id>', doc='delete user by id', execute=delete_test),
     )
 
     @get(rule='/<id>')
     @spec.validate(resp=SpecResponse(HTTP_200=ResponseModel), tags=['users'])
     def get_user(id):
         '''get user by id'''
-        return Response(f'get user {id}')
+        print(id)
+        users = Actions.connector.fetcher(Users, default_query={'id': id})
+        return Response(users)
