@@ -89,15 +89,25 @@ class Route:
         hook: Callable = None,
     ):
         self.rule = rule
-        self.doc = doc
         self.methods = methods
+        self.doc = doc
         self.options = options or {}
         self.actions = actions
         self.hook = hook
         self.execute = self.parse_execute(execute)
         self.validator = self.parse_validator(validator)
         
+        self.validate()
 
+    def validate(self):
+        assert(isinstance(self.rule, str))
+        assert(isinstance(self.methods, list))
+        assert(isinstance(self.doc, str) or self.doc is None)
+        assert(isinstance(self.actions, ActionsConnector) or self.actions is None)
+        assert(callable(self.hook) or self.hook is None)
+        assert(isinstance(self.execute, tuple) or callable(self.execute) or self.execute is None)
+        assert(isinstance(self.validator, dict) or callable(self.validator) or self.validator is None)
+        
     def is_dynamic(self) -> bool:
         return '<' in self.rule and '>' in self.rule
 
@@ -171,25 +181,30 @@ class Get(Route):
 
     def __init__(
         self,
-        rule: str,
-        args: dict = None,
-        query: dict = None,
+        default_args: dict = None,
+        default_query: dict = None,
         strict_filter: dict = None,
-        projection: dict = None,
+        default_projection: dict = None,
         **route_kwargs,
     ):
         if 'methods' not in route_kwargs:
             route_kwargs['methods'] = ['GET']
 
-        self.rule = rule
-        self.args = args
-        self.query = query
+        self.default_args = default_args
+        self.default_query = default_query
         self.strict_filter = strict_filter
-        self.projection = projection
+        self.default_projection = default_projection
 
-        Route.__init__(self, rule, **route_kwargs)
+        Route.__init__(self, **route_kwargs)
+        
+        self.validate()
 
-
+    def validate(self):
+        assert(isinstance(self.default_args, dict))
+        assert(isinstance(self.default_query, dict))
+        assert(isinstance(self.strict_filter, dict))
+        assert(isinstance(self.default_projection, dict))
+        
 class Post(Route):
     GENERATOR = MethodGenerator._post
 

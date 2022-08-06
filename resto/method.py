@@ -50,10 +50,10 @@ class MethodGenerator:
         validator: dict,
         route: Route,
     ):
-        args = route.args or {}
+        default_args = route.default_args or {}
         strict_filter = route.strict_filter or {}
-        query = route.query or {}
-        projection = route.projection or {}
+        default_query = route.default_query or {}
+        default_projection = route.default_projection or {}
 
         validator_args = {'query': model.farms['Filterable']}
         validator_args.update(validator)
@@ -64,10 +64,10 @@ class MethodGenerator:
 
             results = actions.fetcher(
                 model,
-                args=args,
+                default_args=default_args,
                 strict_filter=strict_filter,
-                query=query,
-                projection=projection,
+                default_query=default_query,
+                default_projection=default_projection,
             )
             if route.hook:
                 return route.hook(results=results, **params)

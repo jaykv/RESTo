@@ -18,10 +18,10 @@ class ActionsConnector:
     @staticmethod
     def fetcher(
         model: type[Model],
-        args: dict,
+        default_args: dict,
         strict_filter: dict,
-        query: dict,
-        projection: dict,
+        default_query: dict,
+        default_projection: dict,
     ) -> Model:
         raise NotImplementedError
 
@@ -30,9 +30,9 @@ class ActionsConnector:
         raise NotImplementedError
 
     @staticmethod
-    def updater(model: type[Model], id: str, data: dict, upsert: bool = False) -> Model:
+    def updater(model: type[Model], obj: Model, id: str, data: dict, upsert: bool = False) -> Model:
         raise NotImplementedError
 
     @staticmethod
-    def deleter(model: type[Model], id: str, filter: dict) -> Model:
+    def deleter(model: type[Model], obj: Model, id: str, filter: dict = None) -> Model:
         raise NotImplementedError
