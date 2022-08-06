@@ -1,0 +1,20 @@
+name: Lint
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10"]
+    steps:
+     - uses: actions/checkout@v2  
+     - name: Python Linter
+       uses: sunnysid3up/python-linter@master
+       with:
+         source: "resto"
+         mypy-options: "--ignore-missing-imports --show-error-codes"
+         pylint-options: "--rcfile=setup.cfg"
+         isort-options: "-w 100"
+         black-options: "--line-length 100 --skip-string-normalization"
