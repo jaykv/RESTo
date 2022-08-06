@@ -1,9 +1,11 @@
-from flask import Flask, Blueprint, request
+from typing import List
+
+from flask import Blueprint, Flask, request
+
+from resto.api import Response
 from resto.controller import App, Controller
 from resto.router import Router
 from resto.util import BaseUtil, RESTError
-from typing import List
-from resto.api import Response
 
 
 class RESToFlask(App):

@@ -1,3 +1,10 @@
 [tool.black]
 line-length = 100
 skip-string-normalization = 1
+
+[tool.isort]
+profile = "black"
+line_length = 100
+default_section = "THIRDPARTY"
+known_first_party = "resto"
+known_third_party = ["_pytest", "spectree", "aiohttp", "attr", "click", "curlify", "fastapi", "flask", "graphene", "graphql", "graphql_server", "hypothesis", "hypothesis_graphql", "hypothesis_jsonschema", "jsonschema", "junit_xml", "packaging", "pydantic", "pytest", "pytest_subtests", "requests", "schemathesis", "starlette", "typing_extensions", "urllib3", "werkzeug", "yaml", "yarl"]

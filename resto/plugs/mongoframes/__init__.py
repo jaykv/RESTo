@@ -1,7 +1,9 @@
-from pymongo import MongoClient
-from resto.model import FarmBuilder, Models
-from resto.actions import Actions
 from mongoframes import Frame
+from pymongo import MongoClient
+
+from resto.actions import Actions
+from resto.model import FarmBuilder, Models
+
 from .actions import MongoActions
 
 

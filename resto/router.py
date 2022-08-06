@@ -1,8 +1,9 @@
 from typing import Callable
-from resto.model import Model
-from resto.controller import Route, Get, Post, Patch, Delete
-from resto.method import MethodGenerator
+
 from resto.actions import Actions
+from resto.controller import Delete, Get, Patch, Post, Route
+from resto.method import MethodGenerator
+from resto.model import Model
 
 
 class Router:

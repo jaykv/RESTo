@@ -1,6 +1,7 @@
-from resto.plugs.mongoframes.frame import SerializedFrame
-from resto.model import model, Field
 from datetime import datetime
+
+from resto.model import Field, model
+from resto.plugs.mongoframes.frame import SerializedFrame
 
 
 @model()

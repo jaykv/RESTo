@@ -1,9 +1,10 @@
-from resto.plugs.flask import RESToFlask, request
-from resto.plugs.mongoframes import MongoModeler
+import os
+
+from resto.api import SecurityScheme, register_spec
 from resto.controllers import *
 from resto.models import *
-from resto.api import register_spec, SecurityScheme
-import os
+from resto.plugs.flask import RESToFlask, request
+from resto.plugs.mongoframes import MongoModeler
 
 # load models and actions
 MongoModeler.load_models(mongo_uri=os.environ.get('MONGODB_URI'))

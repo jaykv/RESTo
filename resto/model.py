@@ -1,7 +1,9 @@
 from typing import Any, TypeVar
-from pydantic import BaseModel, create_model
-from resto.util import BaseUtil
+
 import orjson
+from pydantic import BaseModel, create_model
+
+from resto.util import BaseUtil
 
 Models = set()
 Model = TypeVar('Model')

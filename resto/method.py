@@ -1,10 +1,11 @@
 from dataclasses import dataclass
 from typing import TypeVar
-from resto.api import spec, Response
-from resto.model import Model
+
 from resto.actions import ActionsConnector
-from resto.util import BaseUtil
+from resto.api import Response, spec
+from resto.model import Model
 from resto.request import RequestProxy
+from resto.util import BaseUtil
 
 Route = TypeVar('Route')
 

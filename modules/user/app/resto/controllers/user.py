@@ -1,11 +1,13 @@
-from resto.models.user import Users
-from resto.controller import controller, Get, get
-from resto.api import spec, ResponseModel, Response
 from spectree import Response as SpecResponse
+
+from resto.actions import Actions
+from resto.api import Response, ResponseModel, spec
+from resto.controller import Get, controller, get
 from resto.method import MethodParams
+from resto.models.user import Users
 from resto.router import ActionRouter
 from resto.util import BaseUtil
-from resto.actions import Actions
+
 
 def hook_execute(request, context: MethodParams, **params):
     BaseUtil.error(context, params)
@@ -39,7 +41,11 @@ class UserController:
             doc='hook execute by id',
             execute=hook_execute,
             hook=test_hook,
-            validator={'security': {'auth_apiKey': []}, 'query': {'username': (str, ...), 'version': (int, 1)}, 'tags': ['users']},
+            validator={
+                'security': {'auth_apiKey': []},
+                'query': {'username': (str, ...), 'version': (int, 1)},
+                'tags': ['users'],
+            },
         ),
         # hook exec 2
         Get(

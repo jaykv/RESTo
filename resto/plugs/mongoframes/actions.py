@@ -1,7 +1,8 @@
-from resto.actions import ActionsConnector
-from resto.util import BaseUtil, RESTError
 from bson import ObjectId
 from mongoframes import Frame
+
+from resto.actions import ActionsConnector
+from resto.util import BaseUtil, RESTError
 
 
 def build_filter_query(filter, projection):
