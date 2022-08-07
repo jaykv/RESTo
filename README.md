@@ -1,5 +1,9 @@
-
 # RESTo (in development)
+
+[![Lint](https://github.com/jaykv/RESTo/actions/workflows/lint.yml/badge.svg)](https://github.com/jaykv/RESTo/actions/workflows/lint.yml)
+[![Test](https://github.com/jaykv/RESTo/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/jaykv/RESTo/actions/workflows/test.yml)
+
+
 RESTo makes it easy to build APIs quickly without focusing on the redundant and boring stuff. It provides structured abstractions to build flexible and dynamic routes based on your defined models and relations. It aims to synergize nicely with popular web frameworks and ORM/ODMs to support a plug-and-play approach to developing APIs.
 
 ## Features
