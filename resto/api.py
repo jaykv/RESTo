@@ -2,7 +2,7 @@ from typing import Any, List
 
 from pydantic import BaseModel
 from spectree import Response as SpecResponse
-from spectree import SecurityScheme, SpecTree
+from spectree import SpecTree
 from spectree.config import Configuration
 from spectree.plugins import PLUGINS as SPEC_PLUGINS
 

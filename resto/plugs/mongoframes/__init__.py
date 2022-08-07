@@ -2,7 +2,7 @@ from mongoframes import Frame
 from pymongo import MongoClient
 
 from resto.actions import Actions
-from resto.model import FarmBuilder, Models
+from resto.model import Models
 
 from .actions import MongoActions
 

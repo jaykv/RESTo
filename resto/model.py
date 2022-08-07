@@ -3,8 +3,6 @@ from typing import Any, TypeVar
 import orjson
 from pydantic import BaseModel, create_model
 
-from resto.util import BaseUtil
-
 Models = set()
 Model = TypeVar('Model')
 
@@ -154,7 +152,7 @@ class FarmBuilder:
         return farms
 
     def build_farm(self, farm_name: str, property_name: str, **model_kwargs) -> BaseModel:
-        if not property_name in FarmBuilder.properties:
+        if property_name not in FarmBuilder.properties:
             return
 
         farm_fields = self.farm_fields[property_name]

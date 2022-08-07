@@ -1,6 +1,6 @@
 from typing import List
 
-from flask import Blueprint, Flask, request
+from flask import Blueprint, Flask
 
 from resto.api import Response
 from resto.controller import App, Controller

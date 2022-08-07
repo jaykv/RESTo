@@ -1,12 +1,9 @@
 from typing import Callable, Generic, List, TypeVar, Union
 
-from mongoframes import Frame
-
-from resto.actions import Actions, ActionsConnector
+from resto.actions import ActionsConnector
 from resto.method import MethodGenerator
 from resto.model import FarmBuilder
 from resto.request import RequestProxy
-from resto.util import BaseUtil
 
 __all__ = [
     'Controllers',

@@ -5,7 +5,6 @@ from resto.actions import ActionsConnector
 from resto.api import Response, spec
 from resto.model import Model
 from resto.request import RequestProxy
-from resto.util import BaseUtil
 
 Route = TypeVar('Route')
 
@@ -60,7 +59,7 @@ class MethodGenerator:
 
         @spec.rest_validate(**validator)
         def inner_get(**params):
-            req_filters = RequestProxy.request.context.query
+            # req_filters = RequestProxy.request.context.query
 
             results = actions.fetcher(
                 model,

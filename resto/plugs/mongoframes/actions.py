@@ -2,7 +2,7 @@ from bson import ObjectId
 from mongoframes import Frame
 
 from resto.actions import ActionsConnector
-from resto.util import BaseUtil, RESTError
+from resto.util import RESTError
 
 
 def build_filter_query(filter, projection):

@@ -1,8 +1,6 @@
 import os
 
 from resto.api import SecurityScheme, register_spec
-from resto.controllers import *
-from resto.models import *
 from resto.plugs.flask import RESToFlask, request
 from resto.plugs.mongoframes import MongoModeler
 
