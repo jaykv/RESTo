@@ -1,5 +1,6 @@
-pydantic==1.9.1
-spectree==0.10.4
+pydantic>=1.9.1
+spectree>=0.10.4
+orjson>=3.7.12
 
 # Plug requirements
 flask==2.1.2

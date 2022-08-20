@@ -9,7 +9,7 @@ from resto.router import ActionRouter
 from resto.util import BaseUtil
 
 
-def hook_execute(request, context: MethodParams, **params):
+def pipes_execute(request, context: MethodParams, **params):
     BaseUtil.error(context, params)
     print(request.headers.get('Authorization'))
     params.update({'success': True})
@@ -17,12 +17,12 @@ def hook_execute(request, context: MethodParams, **params):
     return params
 
 
-def test_hook(results, **params):
-    return Response(results)
+def test_pipes(results, **params):
+    return results
 
 
-def test_hookname(results, **params):
-    return Response(params)
+def test_pipesname(results, **params):
+    return params
 
 
 @controller('/users')
@@ -35,24 +35,24 @@ class UserController:
         Get('/', doc='fetch users', default_query={'test': 123}),
         # custom executes
         Get('/lambda/<id>', doc='lambda test', execute=lambda id: f'lambda user {id}'),
-        # hook exec 1
+        # pipes exec 1
         Get(
-            '/hook/<id>',
-            doc='hook execute by id',
-            execute=hook_execute,
-            hook=test_hook,
+            '/pipes/<id>',
+            doc='pipes execute by id',
+            execute=pipes_execute,
+            pipes=[test_pipes],
             validator={
                 'security': {'auth_apiKey': []},
                 'query': {'username': (str, ...), 'version': (int, 1)},
                 'tags': ['users'],
             },
         ),
-        # hook exec 2
+        # pipes exec 2
         Get(
-            '/hookname/<name>',
-            doc='hook execute by name',
-            execute=hook_execute,
-            hook=test_hookname,
+            '/pipesname/<name>',
+            doc='pipes execute by name',
+            execute=pipes_execute,
+            pipes=[test_pipesname],
             validator={'tags': ['users']},
         ),
     )
@@ -61,6 +61,5 @@ class UserController:
     @spec.validate(resp=SpecResponse(HTTP_200=ResponseModel), tags=['users'])
     def get_user(id):
         '''get user by id'''
-        print(id)
         users = Actions.connector.fetcher(Users, default_query={'id': id})
         return Response(users)

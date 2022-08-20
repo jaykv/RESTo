@@ -70,7 +70,7 @@ class Route:
         'validator',
         'execute',
         'options',
-        'hook',
+        'pipes',
     ]
 
     GENERATOR = MethodGenerator._execute
@@ -84,14 +84,14 @@ class Route:
         validator: dict = None,
         execute: Union[Callable, tuple] = None,
         options: dict = None,
-        hook: Callable = None,
+        pipes: List[Callable] = None,
     ):
         self.rule = rule
         self.methods = methods
         self.doc = doc
         self.options = options or {}
         self.actions = actions
-        self.hook = hook
+        self.pipes = pipes
         self.execute = self.parse_execute(execute)
         self.validator = self.parse_validator(validator)
 
@@ -102,7 +102,9 @@ class Route:
         assert isinstance(self.methods, list)
         assert isinstance(self.doc, str) or self.doc is None
         assert isinstance(self.actions, ActionsConnector) or self.actions is None
-        assert callable(self.hook) or self.hook is None
+        assert isinstance(self.pipes, list) or self.pipes is None
+        for pipe in self.pipes:
+            assert callable(pipe)
         assert isinstance(self.execute, tuple) or callable(self.execute) or self.execute is None
         assert (
             isinstance(self.validator, dict) or callable(self.validator) or self.validator is None

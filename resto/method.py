@@ -18,7 +18,6 @@ class MethodParams:
 
 class MethodGenerator:
     """Dynamic method generators to link each REST method to an action"""
-
     @classmethod
     def _execute(
         cls,
@@ -36,10 +35,8 @@ class MethodGenerator:
             results = execute(
                 request=RequestProxy.request, context=context, **execute_params, **params
             )
-
-            if route.hook:
-                return route.hook(results=results, **params)
-
+            for pipe in route.pipes:
+                results = pipe(results=results, **params)
             return Response(data=results)
 
         return inner_execute
@@ -68,8 +65,8 @@ class MethodGenerator:
                 default_query=default_query,
                 default_projection=default_projection,
             )
-            if route.hook:
-                return route.hook(results=results, **params)
+            for pipe in route.pipes:
+                results = pipe(results=results, **params)
             return Response(data=results)
 
         return inner_get
@@ -85,8 +82,8 @@ class MethodGenerator:
         @spec.rest_validate(**validator)
         def inner_post(**params):
             results = actions.inserter(model, data=RequestProxy.request.context.json)
-            if route.hook:
-                return route.hook(results=results, **params)
+            for pipe in route.pipes:
+                results = pipe(results=results, **params)
             return Response(data=results)
 
         return inner_post
@@ -102,8 +99,8 @@ class MethodGenerator:
         @spec.rest_validate(**validator)
         def inner_patch(**params):
             results = actions.updater(model, data=RequestProxy.request.context.json)
-            if route.hook:
-                return route.hook(results=results, **params)
+            for pipe in route.pipes:
+                results = pipe(results=results, **params)
             return Response(data=results)
 
         return inner_patch
@@ -119,8 +116,8 @@ class MethodGenerator:
         @spec.rest_validate(**validator)
         def inner_put(**params):
             results = actions.updater(model, data=RequestProxy.request.context.json, upsert=True)
-            if route.hook:
-                return route.hook(results=results, **params)
+            for pipe in route.pipes:
+                results = pipe(results=results, **params)
             return Response(data=results)
 
         return inner_put
@@ -136,8 +133,8 @@ class MethodGenerator:
         @spec.rest_validate(**validator)
         def inner_delete(**params):
             results = actions.deleter(model, filter=RequestProxy.request.context.json)
-            if route.hook:
-                return route.hook(results=results, **params)
+            for pipe in route.pipes:
+                results = pipe(results=results, **params)
             return Response(data=results)
 
         return inner_delete
