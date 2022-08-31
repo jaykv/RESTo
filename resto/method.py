@@ -18,6 +18,7 @@ class MethodParams:
 
 class MethodGenerator:
     """Dynamic method generators to link each REST method to an action"""
+
     @classmethod
     def _execute(
         cls,

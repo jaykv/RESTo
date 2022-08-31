@@ -27,7 +27,7 @@ services:
     image: local-user-module
     container_name: user-module
     build: 
-      context: modules/user
+      context: modules/starlite-user
       dockerfile: Dockerfile
     env_file:
       - .env
@@ -37,8 +37,8 @@ services:
       - shared-network
     volumes:
       - ./resto:/usr/local/lib/python3.9/site-packages/resto
-      - ./modules/user/app/resto/controllers/user.py:/usr/local/lib/python3.9/site-packages/resto/controllers/user.py
-      - ./modules/user/app/resto/models/user.py:/usr/local/lib/python3.9/site-packages/resto/models/user.py
+      - ./modules/starlite-user/app/resto/controllers/user.py:/usr/local/lib/python3.9/site-packages/resto/controllers/user.py
+      - ./modules/starlite-user/app/resto/models/user.py:/usr/local/lib/python3.9/site-packages/resto/models/user.py
     ports:
       - 8080:5000
     depends_on:

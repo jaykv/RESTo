@@ -31,10 +31,10 @@ class App(Generic[Controller]):
 
     def __init__(self, name: str, request_proxy, lazy_load: bool = False):
         self.name = name
-        self.app = self.build_app()
         self.request_proxy = request_proxy
 
         if not lazy_load:
+            self.app = self.build_app()
             self.load_controllers(Controllers)
 
         RequestProxy.set_request(request_proxy)
