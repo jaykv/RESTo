@@ -32,7 +32,7 @@ services:
     env_file:
       - .env
     environment:
-      - MONGODB_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongod:27017/testdb?authSource=admin
+      - MONGODB_URI=${MONGODB_URI}
     networks:
       - shared-network
     volumes:

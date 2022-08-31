@@ -17,12 +17,20 @@ RESTo makes it easy to build APIs quickly without focusing on the redundant and 
 * OpenAPI security and authentication schemes
 
 ### Todo:
-* Model relationships
-* Dynamic cascades based on Model rules
-* Search flags to support flexible data-filtering through endpoint args
-* SQLalchemy support (model connector)
-* Falcon and Starlette support (controller connectors)
-* Adaptable validators- dynamic filtering and querying
+* [ ] Model relationships  
+* [ ] Dynamic cascades based on Model rules
+* [ ] Search flags to support flexible data-filtering through endpoint args
+* [ ] SQLalchemy support (model connector)
+* [ ] Falcon and Starlette support (controller connectors)
+* [ ] Adaptable validators- dynamic filtering and querying
+* [ ] Throttle limits
+* [ ] Multiversioning 
+* [ ] API keys
+* [ ] Data transformations
+* [ ] SDK generation
+* [ ] Mock integration
+* [ ] Response caching
+
 
 ## Plugs
 Plugs are external frameworks and database ORM/ODMs that "plug" into the RESTo framework through connectors. Connectors bridge the gap between RESTo's abstraction layer- linking the frameworks through an interface for either AppBuilder/Controller or Actions/Model.
